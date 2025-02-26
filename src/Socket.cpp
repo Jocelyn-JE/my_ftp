@@ -69,5 +69,16 @@ const char *ftp::Socket::SocketError::what() const noexcept
 
 void ftp::Socket::writeToSocket(std::string str)
 {
-    write(this->_socketFd, (str + "\r\n").c_str(), str.length());
+    std::string crlfEndedString = str + "\r\n";
+
+    if (write(this->_socketFd, crlfEndedString.c_str(),
+        crlfEndedString.length()) == -1) {
+        throw ftp::Socket::SocketError("Write on fd " + _socketFd +
+            (" failed: " + std::string(strerror(errno))));
+    }
+}
+
+std::string ftp::Socket::readFromSocket()
+{
+    return "";
 }

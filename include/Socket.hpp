@@ -22,6 +22,7 @@ namespace ftp {
             void bindSocket(uint16_t port);
             void listenSocket(int backlog);
             void writeToSocket(std::string);
+            std::string readFromSocket();
             class SocketError : public std::exception {
                 public:
                     SocketError(std::string message);
