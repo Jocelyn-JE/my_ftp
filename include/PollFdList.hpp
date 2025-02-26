@@ -22,7 +22,4 @@ namespace ftp {
     };
 }
 
-
-    
-
 #endif /* !POLLFDLIST_HPP_ */
