@@ -75,6 +75,7 @@ jobs:
     - name: Clean temporary files
       run: make clean
     - name: Check executables
+      shell: bash
       run: |
         exit_code=0
       
