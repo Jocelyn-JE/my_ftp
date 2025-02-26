@@ -1,0 +1,73 @@
+/*
+** EPITECH PROJECT, 2025
+** my_ftp
+** File description:
+** Socket
+*/
+
+#include "Socket.hpp"
+#include <string.h>
+#include <unistd.h>
+#include <iostream>
+
+ftp::Socket::Socket(int domain, int type, int protocol)
+{
+    _socketFd = socket(domain, type, protocol);
+    if (_socketFd == -1)
+        throw ftp::Socket::SocketError("Socket creation failed: " +
+            std::string(strerror(errno)));
+    std::cout << "Created socket on fd: " << _socketFd << std::endl;
+}
+
+ftp::Socket::~Socket() noexcept(false)
+{
+    if (_socketFd >= 0) {
+        if (close(_socketFd) == -1)
+            throw ftp::Socket::SocketError("Failed to close socket: " +
+                std::string(strerror(errno)));
+        std::cout << "Closed socket on fd: " << _socketFd << std::endl;
+    }
+}
+
+int ftp::Socket::getSocketFd() const
+{
+    return _socketFd;
+}
+
+void ftp::Socket::bindSocket(uint16_t port)
+{
+    memset(&_address, 0, sizeof(_address));
+    _address.sin_family = AF_INET;
+    _address.sin_port = htons(port);
+    _address.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (bind(_socketFd, (const struct sockaddr *) &_address,
+        sizeof(_address)) == -1)
+        throw ftp::Socket::SocketError("Bind failed: " +
+            std::string(strerror(errno)));
+}
+
+void ftp::Socket::listenSocket(int backlog)
+{
+    if (listen(_socketFd, backlog))
+        throw ftp::Socket::SocketError("Listen failed: " +
+            std::string(strerror(errno)));
+}
+
+ftp::Socket::SocketError::SocketError(std::string message)
+{
+    _message = message;
+}
+
+ftp::Socket::SocketError::~SocketError()
+{
+}
+
+const char *ftp::Socket::SocketError::what() const noexcept
+{
+    return _message.c_str();
+}
+
+void ftp::Socket::writeToSocket(std::string str)
+{
+    write(this->_socketFd, (str + "\r\n").c_str(), str.length());
+}

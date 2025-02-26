@@ -8,19 +8,19 @@
 #include "Server.hpp"
 #include "Client.hpp"
 #include "Parser.hpp"
+#include "RunServer.hpp"
 #include <iostream>
 
 int main(int argc, char **argv)
 {
-    ftp::Server server;
     ftp::Parser parser(argc, argv);
 
     try {
         parser.parseArgs();
     } catch(const ftp::Parser::ParsingError &e) {
-        std::cerr << e.what() << '\n';
-        std::cerr << parser.getUsage() << '\n';
+        std::cerr << e.what() << std::endl;
+        std::cerr << parser.getUsage() << std::endl;
         return 84;
     }
-    return 0;
+    return ftp::runServer(atoi(argv[1]), argv[2]);
 }
