@@ -5,7 +5,7 @@
 ## Makefile
 ##
 
-.PHONY: all clean fclean re tests_run
+.PHONY: all clean fclean re tests_run vg cs
 
 %.o: %.cpp
 	@echo "Compiling $<"
@@ -18,6 +18,7 @@ MAIN_SRC		=	src/Main.cpp
 
 SRC				=	src/server/Server.cpp	\
 					src/client/Client.cpp	\
+					src/Parser.cpp			\
 
 TESTS_SRC		=	tests/tests.cpp			\
 
@@ -31,6 +32,14 @@ CPPFLAGS		+=	-std=c++20 -Wall -Wextra -Werror $(INCLUDES) -O2 -g
 
 CPPTESTFLAGS	=	--coverage -lcriterion $(CPPFLAGS)
 
+VALGRIND_LOG	=	valgrind.log
+
+VALGRIND_FLAGS	=	--leak-check=full					\
+					--show-leak-kinds=definite			\
+					--track-origins=yes					\
+					--errors-for-leak-kinds=definite	\
+					--log-file="$(VALGRIND_LOG)"		\
+
 all: $(NAME)
 
 $(NAME):	$(OBJ) $(MAIN_OBJ)
@@ -42,9 +51,10 @@ run: re
 	@echo "-----------------------------------"
 	@./$(NAME)
 
-valgrind: $(NAME)
+vg: $(NAME)
 	@echo "Running Valgrind..."
-	@valgrind --leak-check=full --show-leak-kinds=all ./$(NAME)
+	@valgrind $(VALGRIND_FLAGS) ./$(NAME) 4242 tests
+	@cat $(VALGRIND_LOG)
 
 tests_run:
 	@echo "Running tests..."
@@ -58,6 +68,7 @@ clean:
 	@rm -f *.gcda
 	@rm -f *.gcno
 	@rm -f vgcore.*
+	@rm -f *.log
 
 fclean: clean
 	@echo "Removing binaries..."
@@ -65,3 +76,8 @@ fclean: clean
 	@rm -f unit_tests
 
 re: fclean all
+
+cs:	clean
+	@coding-style . .
+	@cat coding-style-reports.log
+	@rm -f coding-style-reports.log
