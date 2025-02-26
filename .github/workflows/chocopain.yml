@@ -111,13 +111,7 @@ jobs:
         run: make
 
       - name: "Run tests with Valgrind to check for memory leaks"
-        shell: bash
-        run: |
-          IFS=', ' read -r -a array <<< "$EXECUTABLES"
-          for element in "${array[@]}"
-          do
-              valgrind --leak-check=full --error-exitcode=1 ./$element
-          done
+        run: make vg
 
   run_tests:
     name: "Running tests"
