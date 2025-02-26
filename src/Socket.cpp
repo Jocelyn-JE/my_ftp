@@ -87,5 +87,14 @@ void ftp::Socket::writeToSocket(std::string str)
 
 std::string ftp::Socket::readFromSocket()
 {
-    return "";
+    char buffer[BUFSIZ];
+    int bytes_read = read(_socketFd, buffer, sizeof(buffer));
+
+    if (bytes_read <= 0) {
+        throw ftp::Socket::SocketError("Read on fd " + _socketFd +
+            (" failed: " + std::string(strerror(errno))));
+    } else {
+        buffer[bytes_read] = '\0';
+    }
+    return buffer;
 }
