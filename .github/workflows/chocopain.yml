@@ -98,7 +98,8 @@ jobs:
   check_memory_leaks:
     name: "Check for memory leaks"
     timeout-minutes: 2
-    needs: [check_program_compilation]
+    needs:
+      - check_program_compilation
     runs-on: ubuntu-latest
     container:
       image: epitechcontent/epitest-docker
@@ -122,7 +123,6 @@ jobs:
     name: "Running tests"
     needs: 
       - check_program_compilation
-      - check_memory_leaks
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker:latest
     steps:
@@ -134,7 +134,9 @@ jobs:
 
   push_to_mirror:
     name: "Push to mirror repository"
-    needs: run_tests
+    needs:
+      - check_memory_leaks
+      - run_tests
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
