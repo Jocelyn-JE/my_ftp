@@ -7,10 +7,10 @@
 
 #include "Client.hpp"
 
-Client::Client()
+ftp::Client::Client()
 {
 }
 
-Client::~Client()
+ftp::Client::~Client()
 {
 }

@@ -6,11 +6,13 @@
 */
 
 #include "Server.hpp"
+#include <sys/socket.h>
 
-Server::Server()
+ftp::Server::Server()
 {
+    _socket = socket(AF_INET, SOCK_STREAM, 0);
 }
 
-Server::~Server()
+ftp::Server::~Server()
 {
 }

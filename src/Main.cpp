@@ -6,10 +6,21 @@
 */
 
 #include "Server.hpp"
+#include "Client.hpp"
+#include "Parser.hpp"
+#include <iostream>
 
 int main(int argc, char **argv)
 {
-    (void)argc;
-    (void)argv;
+    ftp::Server server;
+    ftp::Parser parser(argc, argv);
+
+    try {
+        parser.parseArgs();
+    } catch(const ftp::Parser::ParsingError &e) {
+        std::cerr << e.what() << '\n';
+        std::cerr << parser.getUsage() << '\n';
+        return 84;
+    }
     return 0;
 }
