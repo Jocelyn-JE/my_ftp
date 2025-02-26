@@ -16,7 +16,7 @@ int ftp::runServer(int port, std::string rootPath)
     try {
         ftp::Server server(port, rootPath);
 
-        while (poll_result != 0) {
+        while (poll_result != -1) {
             poll_result = server.pollSockets();
             server.updateSockets();
         }

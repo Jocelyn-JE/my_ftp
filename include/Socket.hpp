@@ -16,6 +16,7 @@ namespace ftp {
     class Socket {
         public:
             Socket() = delete;
+            Socket(int fd, struct sockaddr_in address);
             Socket(int domain, int type, int protocol);
             ~Socket() noexcept(false);
             int getSocketFd() const;

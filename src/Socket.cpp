@@ -10,6 +10,13 @@
 #include <unistd.h>
 #include <iostream>
 
+ftp::Socket::Socket(int fd, struct sockaddr_in address)
+{
+    _socketFd = fd;
+    _address = address;
+    std::cout << "Fetched new socket on fd: " << _socketFd << std::endl;
+}
+
 ftp::Socket::Socket(int domain, int type, int protocol)
 {
     _socketFd = socket(domain, type, protocol);

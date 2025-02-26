@@ -20,10 +20,11 @@ namespace ftp {
             ~Server();
             int pollSockets();
             void updateSockets();
+            void handleConnection();
         protected:
         private:
-            Socket _socket;
-            PollFdList _socketList;
+            std::vector<Socket> _socketList;
+            PollFdList _socketPollList;
     };
 }
 
