@@ -8,20 +8,40 @@
 #include "RunServer.hpp"
 #include "Server.hpp"
 #include <iostream>
+#include <signal.h>
+
+volatile sig_atomic_t stopFlag = 0;
+
+static void handler(int signum)
+{
+	stopFlag = signum;
+}
 
 int ftp::runServer(int port, std::string rootPath)
 {
     int poll_result = 0;
+    struct sigaction sa;
 
+	sa.sa_handler = handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_RESTART; 
+    sigaction(SIGINT, &sa, NULL);
     try {
         ftp::Server server(port, rootPath);
 
-        while (poll_result != -1 && !server.isClosed()) {
+        while (poll_result != -1) {
+            if (stopFlag)
+                break;
             poll_result = server.pollSockets();
             server.updateSockets();
         }
-    } catch(const std::exception& e) {
+    } catch(const ftp::Socket::SocketError &e) {
         std::cerr << e.what() << std::endl;
+        if (stopFlag) {
+            sa.sa_handler = SIG_DFL; 
+	        sigaction(SIGINT, &sa, NULL);
+	        raise(SIGINT);
+        }
         return 84;
     }
     return 0;
