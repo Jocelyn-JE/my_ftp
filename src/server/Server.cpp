@@ -78,7 +78,6 @@ void ftp::Server::updateSockets()
                     }
                 }
             }
-            
         }
     }
 }
