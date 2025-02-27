@@ -10,6 +10,7 @@
 
     #include "Socket.hpp"
     #include "PollFdList.hpp"
+    #include <memory>
     #define LISTEN_BACKLOG 128
 
 namespace ftp {
@@ -23,7 +24,7 @@ namespace ftp {
             void handleConnection();
         protected:
         private:
-            std::vector<Socket> _socketList;
+            std::vector<std::unique_ptr<Socket>> _socketList;
             PollFdList _socketPollList;
     };
 }
