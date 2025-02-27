@@ -11,6 +11,7 @@
     #include "Socket.hpp"
     #include "PollFdList.hpp"
     #include <memory>
+    #include "Client.hpp"
     #define LISTEN_BACKLOG 128
 
 namespace ftp {
@@ -26,7 +27,8 @@ namespace ftp {
             bool isClosed();
         protected:
         private:
-            std::vector<std::unique_ptr<Socket>> _socketList;
+            std::vector<std::unique_ptr<Client>> _clients;
+            Socket _serverSocket;
             PollFdList _socketPollList;
     };
 }

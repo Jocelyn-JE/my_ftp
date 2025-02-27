@@ -96,6 +96,8 @@ void ftp::Socket::writeToSocket(std::string str)
 {
     std::string crlfEndedString = str + "\r\n";
 
+    if (str == "")
+        return;
     if (write(this->_socketFd, crlfEndedString.c_str(),
         crlfEndedString.length()) == -1) {
         throw ftp::Socket::SocketError("Write on fd " + _socketFd +
