@@ -94,5 +94,5 @@ void ftp::Server::handleConnection()
     this->_socketPollList.addSocket(client_socket, POLLIN);
     printf("%s:%d connected fd: %d\n", inet_ntoa(client_addr.sin_addr),
         ntohs(client_addr.sin_port), client_socket);
-    write(client_socket, "220 Service ready for new user.\r\n", 34);
+    this->_socketList.back()->writeToSocket("220 Service ready for new user.");
 }
