@@ -35,7 +35,11 @@ ftp::Server::~Server()
 
 int ftp::Server::pollSockets()
 {
-    return poll(_socketPollList.data(), _socketList.size(), -1);
+    int result = poll(_socketPollList.data(), _socketList.size(), -1);
+    if (result == -1)
+        throw ftp::Socket::SocketError("Poll failed: " +
+            std::string(strerror(errno)));
+    return result;
 }
 
 bool ftp::Server::isClosed()
@@ -64,15 +68,6 @@ void ftp::Server::updateSockets()
                         dprintf(_socketPollList[i].fd, "221 Service closing control connection.\r\n");
                         _socketList[i]->closeSocket();
                         printf("Disconnected client %d\n", _socketPollList[i].fd);
-                        _socketList.erase(_socketList.begin() + i);
-                        _socketPollList.removeSocket(_socketPollList[i].fd);
-                    }
-                    if (strcmp(buffer, "CLOSE\r\n") == 0) {
-                        dprintf(_socketPollList[i].fd, "221 Service closing control connection.\r\n");
-                        _socketList[i]->closeSocket();
-                        _socketList[0]->closeSocket();
-                        printf("Disconnected client %d\n", _socketPollList[i].fd);
-                        printf("Closing server\n");
                         _socketList.erase(_socketList.begin() + i);
                         _socketPollList.removeSocket(_socketPollList[i].fd);
                     }
