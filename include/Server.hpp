@@ -22,6 +22,7 @@ namespace ftp {
             int pollSockets();
             void updateSockets();
             void handleConnection();
+            void handleDisconnection(int socketIndex);
             bool isClosed();
         protected:
         private:

@@ -77,6 +77,14 @@ void ftp::Server::updateSockets()
     }
 }
 
+// This function does not close the given socket, it only removes it from the
+// socket list and poll list
+void ftp::Server::handleDisconnection(int socketIndex)
+{
+_socketList.erase(_socketList.begin() + socketIndex);
+    _socketPollList.removeSocket(_socketPollList[socketIndex].fd);
+}
+
 void ftp::Server::handleConnection()
 {
     struct sockaddr_in client_addr;
