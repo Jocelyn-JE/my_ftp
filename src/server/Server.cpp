@@ -48,20 +48,37 @@ void ftp::Server::updateSockets()
     std::string socketStr;
 
     for (std::size_t i = 0; i < _socketList.size(); i++) {
-        if (_socketPollList[i].revents & POLLIN && _socketPollList[i].fd ==
-            _socketList[0].getSocketFd()) {
-            handleConnection();
-        } else if (_socketPollList[i].revents & POLLIN & POLLOUT) {
-            try {
-                socketStr = _socketList[i].readFromSocket();
-            } catch(const ftp::Socket::SocketError &e) {
-                std::cerr << "Client " << _socketList[i].getSocketFd() <<
-                    " disconnected\n" << std::endl;
+        if (_socketPollList[i].revents & POLLIN) {
+            if (_socketPollList[i].fd == _socketList[0]->getSocketFd()) {
+                handleConnection();
+            } else {
+                char buffer[BUFSIZ];
+                int bytes_read = read(_socketPollList[i].fd, buffer, sizeof(buffer));
+                if (bytes_read <= 0) {
+                    printf("Client %d disconnected\n", _socketPollList[i].fd);
+                    _socketList.erase(_socketList.begin() + i);
+                    _socketPollList.removeSocket(_socketPollList[i].fd);
+                } else {
+                    buffer[bytes_read] = '\0';
+                    if (strcmp(buffer, "QUIT\r\n") == 0) {
+                        dprintf(_socketPollList[i].fd, "221 Service closing control connection.\r\n");
+                        _socketList[i]->closeSocket();
+                        printf("Disconnected client %d\n", _socketPollList[i].fd);
+                        _socketList.erase(_socketList.begin() + i);
+                        _socketPollList.removeSocket(_socketPollList[i].fd);
+                    }
+                    if (strcmp(buffer, "CLOSE\r\n") == 0) {
+                        dprintf(_socketPollList[i].fd, "221 Service closing control connection.\r\n");
+                        _socketList[i]->closeSocket();
+                        _socketList[0]->closeSocket();
+                        printf("Disconnected client %d\n", _socketPollList[i].fd);
+                        printf("Closing server\n");
+                        _socketList.erase(_socketList.begin() + i);
+                        _socketPollList.removeSocket(_socketPollList[i].fd);
+                    }
+                }
             }
-        }
-        if (_socketPollList[i].revents & POLLHUP) {
-            _socketList.erase(_socketList.begin() + i);
-            _socketPollList.erase(_socketPollList.begin() + i);
+            
         }
     }
 }
