@@ -111,7 +111,14 @@ jobs:
         run: make
 
       - name: "Run tests with Valgrind to check for memory leaks"
-        run: make vg
+        shell: bash
+        run: |
+          exit_code=0
+          make vg
+          if [[ $? != 84 ]]; then
+              exit_code=1
+          fi
+          exit $exit_code
 
   run_tests:
     name: "Running tests"
