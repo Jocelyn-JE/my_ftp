@@ -24,6 +24,8 @@ namespace ftp {
             void listenSocket(int backlog);
             void writeToSocket(std::string);
             std::string readFromSocket();
+            void closeSocket();
+            bool closesOnDestroy();
             class SocketError : public std::exception {
                 public:
                     SocketError(std::string message);
@@ -33,6 +35,7 @@ namespace ftp {
                     std::string _message;
             };
         private:
+            bool _closeSocketOnDestruction;
             int _socketFd;
             struct sockaddr_in _address;
     };

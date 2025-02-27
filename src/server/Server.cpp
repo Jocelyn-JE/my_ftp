@@ -38,6 +38,11 @@ int ftp::Server::pollSockets()
     return poll(_socketPollList.data(), _socketList.size(), -1);
 }
 
+bool ftp::Server::isClosed()
+{
+    return !_socketList[0]->closesOnDestroy();
+}
+
 void ftp::Server::updateSockets()
 {
     std::string socketStr;

@@ -22,6 +22,7 @@ namespace ftp {
             int pollSockets();
             void updateSockets();
             void handleConnection();
+            bool isClosed();
         protected:
         private:
             std::vector<std::unique_ptr<Socket>> _socketList;

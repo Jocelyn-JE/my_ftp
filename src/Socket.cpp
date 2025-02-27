@@ -10,14 +10,16 @@
 #include <unistd.h>
 #include <iostream>
 
-ftp::Socket::Socket(int fd, struct sockaddr_in address)
+ftp::Socket::Socket(int fd, struct sockaddr_in address) :
+    _closeSocketOnDestruction(false)
 {
     _socketFd = fd;
     _address = address;
     std::cout << "Fetched new socket on fd: " << _socketFd << std::endl;
 }
 
-ftp::Socket::Socket(int domain, int type, int protocol)
+ftp::Socket::Socket(int domain, int type, int protocol) :
+    _closeSocketOnDestruction(true)
 {
     _socketFd = socket(domain, type, protocol);
     if (_socketFd == -1)
@@ -28,12 +30,28 @@ ftp::Socket::Socket(int domain, int type, int protocol)
 
 ftp::Socket::~Socket() noexcept(false)
 {
-    if (_socketFd >= 0) {
+    if (_socketFd >= 0 && _closeSocketOnDestruction) {
         if (close(_socketFd) == -1)
             throw ftp::Socket::SocketError("Failed to close socket: " +
                 std::string(strerror(errno)));
         std::cout << "Closed socket on fd: " << _socketFd << std::endl;
     }
+    std::cout << "Removed socket on fd " << _socketFd << " from server" <<
+        std::endl;
+}
+
+bool ftp::Socket::closesOnDestroy()
+{
+    return _closeSocketOnDestruction;
+}
+
+void ftp::Socket::closeSocket()
+{
+    if (close(_socketFd) == -1)
+        throw ftp::Socket::SocketError("Failed to close socket: " +
+            std::string(strerror(errno)));
+    std::cout << "Closed socket on fd: " << _socketFd << std::endl;
+    _closeSocketOnDestruction = false;
 }
 
 int ftp::Socket::getSocketFd() const
