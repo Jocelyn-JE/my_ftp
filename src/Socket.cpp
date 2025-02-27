@@ -108,11 +108,10 @@ std::string ftp::Socket::readFromSocket()
     char buffer[BUFSIZ];
     int bytes_read = read(_socketFd, buffer, sizeof(buffer));
 
-    if (bytes_read <= 0) {
+    buffer[bytes_read] = '\0';
+    if (bytes_read < 0) {
         throw ftp::Socket::SocketError("Read on fd " + _socketFd +
             (" failed: " + std::string(strerror(errno))));
-    } else {
-        buffer[bytes_read] = '\0';
     }
     return buffer;
 }

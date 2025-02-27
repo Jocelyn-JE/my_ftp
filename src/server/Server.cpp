@@ -56,20 +56,18 @@ void ftp::Server::updateSockets()
             if (_socketPollList[i].fd == _socketList[0]->getSocketFd()) {
                 handleConnection();
             } else {
-                char buffer[BUFSIZ];
-                int bytes_read = read(_socketPollList[i].fd, buffer, sizeof(buffer));
-                if (bytes_read <= 0) {
+                std::string buffer = "";
+
+                buffer = _socketList[i]->readFromSocket();
+                if (buffer == "") {
+                    handleDisconnection(i);
                     printf("Client %d disconnected\n", _socketPollList[i].fd);
-                    _socketList.erase(_socketList.begin() + i);
-                    _socketPollList.removeSocket(_socketPollList[i].fd);
                 } else {
-                    buffer[bytes_read] = '\0';
-                    if (strcmp(buffer, "QUIT\r\n") == 0) {
+                    if (buffer == "QUIT\r\n") {
                         dprintf(_socketPollList[i].fd, "221 Service closing control connection.\r\n");
                         _socketList[i]->closeSocket();
+                        handleDisconnection(i);
                         printf("Disconnected client %d\n", _socketPollList[i].fd);
-                        _socketList.erase(_socketList.begin() + i);
-                        _socketPollList.removeSocket(_socketPollList[i].fd);
                     }
                 }
             }
@@ -81,7 +79,7 @@ void ftp::Server::updateSockets()
 // socket list and poll list
 void ftp::Server::handleDisconnection(int socketIndex)
 {
-_socketList.erase(_socketList.begin() + socketIndex);
+    _socketList.erase(_socketList.begin() + socketIndex);
     _socketPollList.removeSocket(_socketPollList[socketIndex].fd);
 }
 
