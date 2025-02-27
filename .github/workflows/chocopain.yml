@@ -129,7 +129,6 @@ jobs:
   push_to_mirror:
     name: "Push to mirror repository"
     needs:
-      - check_memory_leaks
       - run_tests
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
