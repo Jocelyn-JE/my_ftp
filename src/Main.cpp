@@ -6,7 +6,6 @@
 */
 
 #include "Server.hpp"
-#include "Client.hpp"
 #include "Parser.hpp"
 #include "RunServer.hpp"
 #include <iostream>

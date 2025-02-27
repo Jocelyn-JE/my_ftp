@@ -19,7 +19,6 @@ MAIN_SRC		=	src/Main.cpp
 SRC				=	src/server/Server.cpp		\
 					src/server/RunServer.cpp	\
 					src/server/PollFdList.cpp	\
-					src/client/Client.cpp		\
 					src/Parser.cpp				\
 					src/Socket.cpp				\
 
