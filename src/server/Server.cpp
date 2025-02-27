@@ -38,12 +38,23 @@ int ftp::Server::pollSockets()
 
 void ftp::Server::updateSockets()
 {
+    std::string socketStr;
+
     for (std::size_t i = 0; i < _socketList.size(); i++) {
         if (_socketPollList[i].revents & POLLIN && _socketPollList[i].fd ==
             _socketList[0].getSocketFd()) {
             handleConnection();
         } else if (_socketPollList[i].revents & POLLIN & POLLOUT) {
-            
+            try {
+                socketStr = _socketList[i].readFromSocket();
+            } catch(const ftp::Socket::SocketError &e) {
+                std::cerr << "Client " << _socketList[i].getSocketFd() <<
+                    " disconnected\n" << std::endl;
+            }
+        }
+        if (_socketPollList[i].revents & POLLHUP) {
+            _socketList.erase(_socketList.begin() + i);
+            _socketPollList.erase(_socketPollList.begin() + i);
         }
     }
 }
