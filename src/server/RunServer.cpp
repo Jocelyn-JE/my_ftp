@@ -37,11 +37,6 @@ int ftp::runServer(int port, std::string rootPath)
         }
     } catch(const ftp::Socket::SocketError &e) {
         std::cerr << e.what() << std::endl;
-        if (stopFlag) {
-            sa.sa_handler = SIG_DFL; 
-	        sigaction(SIGINT, &sa, NULL);
-	        raise(SIGINT);
-        }
         return 84;
     }
     return 0;
