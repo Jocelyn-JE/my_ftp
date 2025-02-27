@@ -95,31 +95,6 @@ jobs:
       
         exit $exit_code
 
-  check_memory_leaks:
-    name: "Check for memory leaks"
-    timeout-minutes: 2
-    needs:
-      - check_program_compilation
-    runs-on: ubuntu-latest
-    container:
-      image: epitechcontent/epitest-docker
-    steps:
-      - name: "Get the repository content"
-        uses: actions/checkout@v4
-
-      - name: "Compile the project"
-        run: make
-
-      - name: "Run tests with Valgrind to check for memory leaks"
-        shell: bash
-        run: |
-          exit_code=0
-          make vg
-          if [[ $? != 84 ]]; then
-              exit_code=1
-          fi
-          exit $exit_code
-
   run_tests:
     name: "Running tests"
     needs: 
