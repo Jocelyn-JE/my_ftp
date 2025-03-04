@@ -54,7 +54,7 @@ void ftp::Server::updateSockets()
                 std::string buffer;
 
                 buffer = _clients[i - 1]->_socket.readFromSocket();
-                _clients[i - 1]->run(buffer);
+                _clients[i - 1]->handleCommand(buffer);
                 if (buffer == "" || buffer == "QUIT\r\n")
                     handleDisconnection(i);
             }
