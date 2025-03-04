@@ -17,7 +17,7 @@ namespace ftp {
             Client() = delete;
             Client(int fd, struct sockaddr_in address);
             ~Client();
-            void run(std::string commandLine);
+            void handleCommand(std::string commandLine);
             Socket _socket;
         private:
             std::unordered_map<std::string,

@@ -69,7 +69,7 @@ static std::string getCommand(const std::string &commandLine)
     return command;
 }
 
-void ftp::Client::run(std::string commandLine)
+void ftp::Client::handleCommand(std::string commandLine)
 {
     std::string name = getCommand(commandLine);
 
