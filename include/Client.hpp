@@ -22,6 +22,10 @@ namespace ftp {
         private:
             std::unordered_map<std::string,
                 std::function<std::string(std::string, Client &)>> _commands;
+            std::string _username;
+            std::string _password;
+            std::string _currentPath;
+            std::string _rootPath;
     };
 }
 
