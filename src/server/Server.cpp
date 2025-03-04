@@ -45,14 +45,13 @@ bool ftp::Server::isClosed()
 void ftp::Server::updateSockets()
 {
     std::string socketStr;
+    std::string buffer;
 
     for (std::size_t i = 0; i < _socketPollList.size(); i++) {
         if (_socketPollList[i].revents & POLLIN) {
             if (i == 0) {
                 handleConnection();
             } else {
-                std::string buffer;
-
                 buffer = _clients[i - 1]->_socket.readFromSocket();
                 _clients[i - 1]->handleCommand(buffer);
                 if (buffer == "" || buffer == "QUIT\r\n")
