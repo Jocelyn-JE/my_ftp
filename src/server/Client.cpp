@@ -10,7 +10,7 @@
 static std::string doNoop(std::string commandLine, ftp::Client &client)
 {
     (void)client;
-    if (commandLine != "NOOP\r\n")
+    if (commandLine != "NOOP")
         return "501 Syntax error in parameters or arguments.";
     return "200 Command okay.";
 }
@@ -18,7 +18,7 @@ static std::string doNoop(std::string commandLine, ftp::Client &client)
 static std::string doQuit(std::string commandLine, ftp::Client &client)
 {
     (void)commandLine;
-    if (commandLine != "QUIT\r\n")
+    if (commandLine != "QUIT")
         return "501 Syntax error in parameters or arguments.";
     printf("Disconnected client %d\n", client._socket.getSocketFd());
     return "221 Service closing control connection.";
@@ -32,6 +32,25 @@ static std::string clientDisconnect(std::string commandLine,
     return "";
 }
 
+static std::string doUser(std::string commandLine, ftp::Client &client)
+{
+    if (commandLine.size() < 6 || commandLine.substr(0, 5) != "USER ")
+        return "501 Syntax error in parameters or arguments.";
+    client._username = commandLine.substr(5, commandLine.size() - 7);
+    return "331 User name okay, need password.";
+}
+
+static std::string doPass(std::string commandLine, ftp::Client &client)
+{
+    if (commandLine.size() < 5 || commandLine.substr(0, 5) != "PASS ")
+        return "501 Syntax error in parameters or arguments.";
+    if (client._username == "") {
+        return "503 Bad sequence of commands.";
+    }
+    client._password = commandLine.substr(5, commandLine.size() - 7);
+    return "230 User logged in, proceed.";
+}
+
 //-----------------------------------------------------------------------------
 
 ftp::Client::Client(int fd, struct sockaddr_in address) : _socket(fd, address)
@@ -39,6 +58,8 @@ ftp::Client::Client(int fd, struct sockaddr_in address) : _socket(fd, address)
     _commands[""] = clientDisconnect;
     _commands["NOOP"] = doNoop;
     _commands["QUIT"] = doQuit;
+    _commands["USER"] = doUser;
+    _commands["PASS"] = doPass;
 }
 
 ftp::Client::~Client()
@@ -77,7 +98,8 @@ void ftp::Client::handleCommand(std::string commandLine)
         _socket.writeToSocket("500 Syntax error, command unrecognized.");
         return;
     }
-    _socket.writeToSocket(_commands[name](commandLine, *this));
+    _socket.writeToSocket(_commands[name](
+        commandLine.substr(0, commandLine.size() - 2), *this));
     if (commandLine == "QUIT\r\n")
         _socket.closeSocket();
 }
