@@ -30,6 +30,7 @@ namespace ftp {
             std::vector<std::unique_ptr<Client>> _clients;
             Socket _serverSocket;
             PollFdList _socketPollList;
+            std::string _anonymousRootPath;
     };
 }
 

@@ -13,7 +13,9 @@
 #include <string.h>
 
 ftp::Server::Server(int port, std::string rootPath) :
-    _serverSocket(AF_INET, SOCK_STREAM, 0), _socketPollList(_serverSocket.getSocketFd())
+    _serverSocket(AF_INET, SOCK_STREAM, 0),
+    _socketPollList(_serverSocket.getSocketFd()),
+    _anonymousRootPath(rootPath)
 {
     _serverSocket.bindSocket(port);
     _serverSocket.listenSocket(LISTEN_BACKLOG);
@@ -77,7 +79,7 @@ void ftp::Server::handleConnection()
         (struct sockaddr *) &client_addr, &client_addr_size);
 
     this->_clients.push_back(std::make_unique<Client>(client_socket,
-        client_addr));
+        client_addr, this->_anonymousRootPath));
     this->_socketPollList.addSocket(client_socket, POLLIN);
     printf("%s:%d connected fd: %d\n", inet_ntoa(client_addr.sin_addr),
         ntohs(client_addr.sin_port), client_socket);

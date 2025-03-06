@@ -15,16 +15,17 @@ namespace ftp {
     class Client {
         public:
             Client() = delete;
-            Client(int fd, struct sockaddr_in address);
+            Client(int fd, struct sockaddr_in address, std::string rootPath);
             ~Client();
             void handleCommand(std::string commandLine);
+            bool isLoggedIn() const;
             Socket _socket;
             std::string _username;
             std::string _password;
+            std::string _currentPath;
         private:
             std::unordered_map<std::string,
                 std::function<std::string(std::string, Client &)>> _commands;
-            std::string _currentPath;
             std::string _rootPath;
     };
 }
