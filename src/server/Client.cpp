@@ -78,7 +78,6 @@ ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
     : _socket(fd, address), _username(""), _password(""),
     _currentPath("/"), _rootPath(rootPath)
 {
-    _commands[""] = clientDisconnect;
     _commands["NOOP"] = doNoop;
     _commands["QUIT"] = doQuit;
     _commands["USER"] = doUser;
@@ -109,6 +108,10 @@ void ftp::Client::handleCommand(std::string commandLine)
 {
     std::string name = getCommand(commandLine);
 
+    if (commandLine == "") {
+        clientDisconnect(commandLine, *this);
+        return;
+    }
     if (_commands.find(name) == _commands.end()) {
         _socket.writeToSocket("500 Syntax error, command unrecognized.");
         return;
