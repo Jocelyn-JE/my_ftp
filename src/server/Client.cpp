@@ -91,24 +91,15 @@ ftp::Client::~Client()
     printf("Destroying client\n");
 }
 
-// Function to trim leading and trailing spaces
-static std::string trim(const std::string &str)
-{
-    size_t first = str.find_first_not_of(' ');
-    if (first == std::string::npos)
-        return "";
-    size_t last = str.find_last_not_of(' ');
-    return str.substr(first, last - first + 1);
-}
-
 // Function to extract the command from the command line and remove CRLF
 static std::string getCommand(const std::string &commandLine)
 {
-    std::string trimmedCommandLine = trim(commandLine);
-    size_t spacePos = trimmedCommandLine.find(' ');
-    std::string command = (spacePos == std::string::npos) ? trimmedCommandLine
-        : trimmedCommandLine.substr(0, spacePos);
+    size_t spacePos = commandLine.find(' ');
+    std::string command = (spacePos == std::string::npos) ? commandLine
+        : commandLine.substr(0, spacePos);
 
+    if (commandLine[0] == ' ')
+        return commandLine;
     if (command.size() >= 2 && command.substr(command.size() - 2) == "\r\n")
         command = command.substr(0, command.size() - 2);
     return command;
