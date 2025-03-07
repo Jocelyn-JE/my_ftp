@@ -19,6 +19,7 @@ namespace ftp {
             ~Client();
             void handleCommand(std::string commandLine);
             bool isLoggedIn() const;
+            std::string getFullPath();
             Socket _socket;
             std::string _username;
             std::string _password;

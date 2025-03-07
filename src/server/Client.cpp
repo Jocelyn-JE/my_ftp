@@ -69,7 +69,7 @@ static std::string doPwd(std::string commandLine, ftp::Client &client)
         return "530 Not logged in.";
     if (commandLine != "PWD")
         return "501 Syntax error in parameters or arguments.";
-    return "257 \"" + client._currentPath + "\" is the current directory.";
+    return "257 \"" + client.getFullPath() + "\" is the current directory.";
 }
 
 //-----------------------------------------------------------------------------
@@ -127,4 +127,9 @@ bool ftp::Client::isLoggedIn() const
     if (_username == "Anonymous" && _password == "")
         return true;
     return false;
+}
+
+std::string ftp::Client::getFullPath()
+{
+    return _rootPath + _currentPath;
 }
