@@ -7,6 +7,7 @@
 
 #include "RunServer.hpp"
 #include "Server.hpp"
+#include "DirectoryUtility.hpp"
 #include <iostream>
 #include <signal.h>
 
@@ -27,7 +28,8 @@ int ftp::runServer(int port, std::string rootPath)
 	sa.sa_flags = SA_RESTART; 
     sigaction(SIGINT, &sa, NULL);
     try {
-        ftp::Server server(port, rootPath);
+        ftp::Server server(port, ftp::DirectoryUtility::removeTrailingSlash(
+            rootPath));
 
         while (poll_result != -1) {
             if (stopFlag)
