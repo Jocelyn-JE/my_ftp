@@ -24,7 +24,7 @@ SRC				=	src/server/Server.cpp			\
 					src/Parser.cpp					\
 					src/Socket.cpp					\
 
-TESTS_SRC		=	tests/tests.cpp			\
+TESTS_SRC		=	tests/DirectoryUtility_tests.cpp\
 
 OBJ				=	$(SRC:.cpp=.o)
 
