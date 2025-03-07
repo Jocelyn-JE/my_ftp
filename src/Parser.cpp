@@ -6,8 +6,8 @@
 */
 
 #include "Parser.hpp"
+#include "DirectoryUtility.hpp"
 #include <iostream>
-#include <sys/stat.h>
 
 ftp::Parser::Parser(int argc, char **argv) : _args(argv, argv + argc),
     _argc(argc)
@@ -33,18 +33,6 @@ std::string ftp::Parser::getUsage()
     path is the path to the home directory for the Anonymous user";
 }
 
-static bool dirExists(const std::string path)
-{
-    struct stat info;
-
-    if(stat(path.c_str(), &info) != 0)
-        return false;
-    else if(info.st_mode & S_IFDIR)
-        return true;
-    else
-        return false;
-}
-
 void ftp::Parser::parseArgs()
 {
     if (_argc == 2 && _args[1] == "-help") {
@@ -55,7 +43,7 @@ void ftp::Parser::parseArgs()
         throw ftp::Parser::ParsingError("Not enough args");
     if (!isNumber(_args[1]))
         throw ftp::Parser::ParsingError("Port must be a number");
-    if (!dirExists(_args[2]))
+    if (!ftp::DirectoryUtility::dirExists(_args[2]))
         throw ftp::Parser::ParsingError("Path does not exist");
 }
 
