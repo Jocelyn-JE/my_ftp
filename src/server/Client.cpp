@@ -40,8 +40,6 @@ static std::string doUser(std::string commandLine, ftp::Client &client)
         return "501 Syntax error in parameters or arguments.";
     tempUser = commandLine.substr(5);
     printf("User: %s\n", tempUser.c_str());
-    if (tempUser != "Anonymous")
-        return "530 Not logged in.";
     client._username = tempUser;
     return "331 User name okay, need password.";
 }
