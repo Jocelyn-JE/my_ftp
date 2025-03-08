@@ -6,6 +6,7 @@
 */
 
 #include "Client.hpp"
+#include "DirectoryUtility.hpp"
 
 static std::string doNoop(std::string commandLine, ftp::Client &client)
 {
@@ -79,6 +80,17 @@ static std::string doPwd(std::string commandLine, ftp::Client &client)
     return "257 \"" + client.getFullPath() + "\" is the current directory.";
 }
 
+static std::string doCdup(std::string commandLine, ftp::Client &client)
+{
+    if (!client.isLoggedIn())
+        return "530 Not logged in.";
+    if (commandLine != "CDUP")
+        return "501 Syntax error in parameters or arguments.";
+    client._currentPath = ftp::DirectoryUtility::getParentDirectory(
+        client._currentPath);
+    return "200 Command okay.";
+}
+
 //-----------------------------------------------------------------------------
 
 ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
@@ -90,6 +102,7 @@ ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
     _commands["USER"] = doUser;
     _commands["PASS"] = doPass;
     _commands["PWD"] = doPwd;
+    _commands["CDUP"] = doCdup;
 }
 
 ftp::Client::~Client()
