@@ -56,13 +56,17 @@ static std::string checkLogin(ftp::Client &client)
 
 static std::string doPass(std::string commandLine, ftp::Client &client)
 {
+    std::string tempPass;
+
     if (client._username == "")
         return "332 Need account for login.";
     if (commandLine.size() < 5 || commandLine.substr(0, 5) != "PASS ")
         return "501 Syntax error in parameters or arguments.";
     if (client._username == "")
         return "503 Bad sequence of commands.";
-    client._password = commandLine.substr(5);
+    tempPass = commandLine.substr(5);
+    printf("Pass: %s\n", tempPass.c_str());
+    client._password = tempPass;
     return checkLogin(client);
 }
 
