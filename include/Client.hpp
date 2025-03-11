@@ -23,7 +23,7 @@ class Client {
     bool isLoggedIn() const;
     std::string getFullPath();
     std::string getRootPath();
-    Socket _socket;
+    Socket _controlSocket;
     std::string _username;
     std::string _password;
     std::string _currentPath;

@@ -49,7 +49,7 @@ void ftp::Server::updateSockets() {
             if (i == 0) {
                 handleConnection();
             } else {
-                buffer = _clients[i - 1]->_socket.readFromSocket();
+                buffer = _clients[i - 1]->_controlSocket.readFromSocket();
                 _clients[i - 1]->handleCommand(buffer);
                 if (buffer == "" || buffer == "QUIT\r\n")
                     handleDisconnection(i);
@@ -77,6 +77,6 @@ void ftp::Server::handleConnection() {
     std::cout << inet_ntoa(client_addr.sin_addr) << ":"
         << ntohs(client_addr.sin_port) << " connected fd: " << client_socket
         << std::endl;
-    this->_clients.back()->_socket.writeToSocket(
+    this->_clients.back()->_controlSocket.writeToSocket(
         "220 Service ready for new user.");
 }

@@ -30,10 +30,9 @@ static const char helpMessage[] = "Usage: \n"
 
 // Helper functions -----------------------------------------------------------
 
-static std::string clientDisconnect(ftp::Client *client) {
-    std::cout << "Client " << client->_socket.getSocketFd() << " disconnected"
-        << std::endl;
-    return "";
+static void clientDisconnect(ftp::Client *client) {
+    std::cout << "Client " << client->_controlSocket.getSocketFd()
+        << " disconnected" << std::endl;
 }
 
 static std::string checkLogin(ftp::Client *client) {
@@ -71,7 +70,7 @@ static std::string doQuit(std::string commandLine, ftp::Client *client) {
     (void)commandLine;
     if (commandLine != "QUIT")
         return "501 Syntax error in parameters or arguments.";
-    std::cout << "Disconnected client " << client->_socket.getSocketFd()
+    std::cout << "Disconnected client " << client->_controlSocket.getSocketFd()
         << std::endl;
     return "221 Service closing control connection.";
 }
@@ -190,7 +189,7 @@ static std::string doDelete(std::string commandLine, ftp::Client *client) {
 // Client class member functions ----------------------------------------------
 
 ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
-    : _socket(fd, address), _username(""), _password(""),
+    : _controlSocket(fd, address), _username(""), _password(""),
     _currentPath(""), _rootPath(rootPath) {
     _commands["USER"] = doUser;
     _commands["PASS"] = doPass;
@@ -215,18 +214,15 @@ ftp::Client::~Client() {
 void ftp::Client::handleCommand(std::string commandLine) {
     std::string name = getCommand(commandLine);
 
-    if (commandLine == "") {
-        clientDisconnect(this);
-        return;
-    }
-    if (_commands.find(name) == _commands.end()) {
-        _socket.writeToSocket("500 Syntax error, command unrecognized.");
-        return;
-    }
-    _socket.writeToSocket(
+    if (commandLine == "")
+        return clientDisconnect(this);
+    if (_commands.find(name) == _commands.end())
+        return _controlSocket.writeToSocket(
+            "500 Syntax error, command unrecognized.");
+    _controlSocket.writeToSocket(
         _commands[name](commandLine.substr(0, commandLine.size() - 2), this));
     if (commandLine == "QUIT\r\n")
-        _socket.closeSocket();
+        _controlSocket.closeSocket();
 }
 
 bool ftp::Client::isLoggedIn() const {
