@@ -117,13 +117,20 @@ static std::string doHelp(std::string commandLine, ftp::Client *client) {
 ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
     : _socket(fd, address), _username(""), _password(""),
     _currentPath("/"), _rootPath(rootPath) {
-    _commands["NOOP"] = doNoop;
-    _commands["QUIT"] = doQuit;
     _commands["USER"] = doUser;
     _commands["PASS"] = doPass;
-    _commands["PWD"] = doPwd;
+    // CWD
     _commands["CDUP"] = doCdup;
+    _commands["QUIT"] = doQuit;
+    // DELE
+    _commands["PWD"] = doPwd;
+    // PASV
+    // PORT
     _commands["HELP"] = doHelp;
+    _commands["NOOP"] = doNoop;
+    // RETR
+    // STOR
+    // LIST
 }
 
 ftp::Client::~Client() {
