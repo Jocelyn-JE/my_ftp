@@ -5,13 +5,12 @@
 ** Main
 */
 
-#include "Server.hpp"
-#include "Parser.hpp"
-#include "RunServer.hpp"
 #include <iostream>
+#include "../include/Server.hpp"
+#include "../include/Parser.hpp"
+#include "../include/RunServer.hpp"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     ftp::Parser parser(argc, argv);
 
     try {

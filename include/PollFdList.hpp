@@ -10,16 +10,17 @@
 
     #include <poll.h>
     #include <vector>
+    #include <cstdint>
 
 namespace ftp {
-    class PollFdList : public std::vector<struct pollfd> {
-        public:
-            PollFdList() = delete;
-            PollFdList(int serverSocket);
-            ~PollFdList();
-            void addSocket(int socket, short events);
-            void removeSocket(int socket);
-    };
-}
+class PollFdList : public std::vector<struct pollfd> {
+ public:
+    PollFdList() = delete;
+    explicit PollFdList(int serverSocket);
+    ~PollFdList();
+    void addSocket(int socket, int16_t events);
+    void removeSocket(int socket);
+};
+}  // namespace ftp
 
-#endif /* !POLLFDLIST_HPP_ */
+#endif  // POLLFDLIST_HPP_

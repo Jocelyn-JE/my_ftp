@@ -13,26 +13,25 @@
     #include <vector>
 
 namespace ftp {
-    class Parser {
-        public:
-            Parser() = delete;
-            Parser(int argc, char **argv);
-            ~Parser();
-            class ParsingError : public std::exception {
-                public:
-                    ParsingError(std::string message);
-                    ~ParsingError();
-                    const char *what() const noexcept override;
-                private:
-                    std::string _message;
-            };
-            void parseArgs();
-            std::string getUsage();
-        protected:
-        private:
-            std::vector<std::string> _args;
-            int _argc;
+class Parser {
+ public:
+        Parser() = delete;
+        Parser(int argc, char **argv);
+        ~Parser();
+        class ParsingError : public std::exception {
+         public:
+            explicit ParsingError(std::string message);
+            ~ParsingError();
+            const char *what() const noexcept override;
+         private:
+            std::string _message;
         };
-}
+        void parseArgs();
+        std::string getUsage();
+ private:
+        std::vector<std::string> _args;
+        int _argc;
+};
+}  // namespace ftp
 
-#endif /* !PARSER_HPP_ */
+#endif  // PARSER_HPP_

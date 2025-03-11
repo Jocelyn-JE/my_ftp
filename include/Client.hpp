@@ -9,26 +9,28 @@
     #define CLIENT_HPP_
 
     #include <bits/stdc++.h>
+    #include <unordered_map>
+    #include <string>
     #include "Socket.hpp"
 
 namespace ftp {
-    class Client {
-        public:
-            Client() = delete;
-            Client(int fd, struct sockaddr_in address, std::string rootPath);
-            ~Client();
-            void handleCommand(std::string commandLine);
-            bool isLoggedIn() const;
-            std::string getFullPath();
-            Socket _socket;
-            std::string _username;
-            std::string _password;
-            std::string _currentPath;
-        private:
-            std::unordered_map<std::string,
-                std::function<std::string(std::string, Client &)>> _commands;
-            std::string _rootPath;
-    };
-}
+class Client {
+ public:
+    Client() = delete;
+    Client(int fd, struct sockaddr_in address, std::string rootPath);
+    ~Client();
+    void handleCommand(std::string commandLine);
+    bool isLoggedIn() const;
+    std::string getFullPath();
+    Socket _socket;
+    std::string _username;
+    std::string _password;
+    std::string _currentPath;
+ private:
+    std::unordered_map<std::string, std::function<std::string(std::string,
+        Client *)>> _commands;
+    std::string _rootPath;
+};
+}  // namespace ftp
 
-#endif /* !CLIENT_HPP_ */
+#endif  // CLIENT_HPP_

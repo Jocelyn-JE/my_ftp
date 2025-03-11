@@ -5,36 +5,32 @@
 ** Parser
 */
 
-#include "Parser.hpp"
-#include "DirectoryUtility.hpp"
 #include <iostream>
+#include <string>
+#include "../include/Parser.hpp"
+#include "../include/DirectoryUtility.hpp"
 
 ftp::Parser::Parser(int argc, char **argv) : _args(argv, argv + argc),
-    _argc(argc)
-{
+    _argc(argc) {
 }
 
-ftp::Parser::~Parser()
-{
+ftp::Parser::~Parser() {
 }
 
-static bool isNumber(std::string str)
-{
+static bool isNumber(std::string str) {
     char *p = 0;
 
     strtol(str.c_str(), &p, 10);
     return *p == 0;
 }
 
-std::string ftp::Parser::getUsage()
-{
-    return "USAGE: ./my_ftp port path\n\
-    port is the port number on which the server socket listens\n\
-    path is the path to the home directory for the Anonymous user";
+std::string ftp::Parser::getUsage() {
+    return R"(USAGE: ./my_ftp port path
+    port is the port number on which the server socket listens
+    path is the path to the home directory for the Anonymous user)";
 }
 
-void ftp::Parser::parseArgs()
-{
+void ftp::Parser::parseArgs() {
     if (_argc == 2 && _args[1] == "-help") {
         std::cout << getUsage() << std::endl;
         exit(0);
@@ -47,16 +43,13 @@ void ftp::Parser::parseArgs()
         throw ftp::Parser::ParsingError("Path does not exist");
 }
 
-ftp::Parser::ParsingError::ParsingError(std::string message)
-{
+ftp::Parser::ParsingError::ParsingError(std::string message) {
     _message = message;
 }
 
-ftp::Parser::ParsingError::~ParsingError()
-{
+ftp::Parser::ParsingError::~ParsingError() {
 }
 
-const char *ftp::Parser::ParsingError::what() const noexcept
-{
+const char *ftp::Parser::ParsingError::what() const noexcept {
     return _message.c_str();
 }
