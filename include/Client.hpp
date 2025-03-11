@@ -22,6 +22,7 @@ class Client {
     void handleCommand(std::string commandLine);
     bool isLoggedIn() const;
     std::string getFullPath();
+    std::string getRootPath();
     Socket _socket;
     std::string _username;
     std::string _password;
