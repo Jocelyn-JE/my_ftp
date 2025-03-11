@@ -161,6 +161,7 @@ static std::string doList(std::string commandLine, ftp::Client *client) {
         std::cout << e.what() << std::endl;
         return "450 Requested file action not taken.";
     }
+    // Implement data transfer
     return "501 " + path;
 }
 
