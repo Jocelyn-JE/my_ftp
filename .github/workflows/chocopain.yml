@@ -60,7 +60,20 @@ jobs:
           exit 1
         fi
         rm "$tmpfile"
-    
+  
+  check_cpp_linter:
+    name: "Check C++ linter"
+    needs: check_coding_style
+    runs-on: ubuntu-latest
+    container: sharaku/cpplint:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
+    - name: Install Make
+      run: apt-get update && apt-get install -y make
+    - name: Run C++ linter
+      run: make linter
+  
   check_program_compilation:
     name: "Check program compilation"
     needs: check_coding_style

@@ -86,3 +86,6 @@ cs:	clean
 	coding-style . .
 	cat coding-style-reports.log
 	rm -f coding-style-reports.log
+
+linter: clean
+	cpplint --root=./include --repository=. --filter=-legal/copyright --recursive ./include/ ./src/
