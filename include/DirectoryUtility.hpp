@@ -21,6 +21,7 @@ std::string resolveCanonicalPath(std::string const &root,
 std::string const &currentDirectory, std::string const &path);
 std::string getParentDirectory(const std::string &path);
 bool dirExists(const std::string &path);
+bool fileExists(const std::string &path);
 }
 }  // namespace ftp
 

@@ -29,6 +29,17 @@ bool ftp::DirectoryUtility::dirExists(const std::string &path) {
         return false;
 }
 
+bool ftp::DirectoryUtility::fileExists(const std::string &path) {
+    struct stat info;
+
+    if (stat(path.c_str(), &info) != 0)
+        return false;
+    else if (info.st_mode & S_IFREG)
+        return true;
+    else
+        return false;
+}
+
 std::string const &ftp::DirectoryUtility::removeTrailingSlash(
     std::string *path) {
     if (path->size() > 1 && (*path)[path->size() - 1] == '/')
