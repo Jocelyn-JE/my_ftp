@@ -10,6 +10,7 @@
 
     #include <bits/stdc++.h>
     #include <unordered_map>
+    #include <memory>
     #include <string>
     #include "Socket.hpp"
 
@@ -24,6 +25,7 @@ class Client {
     std::string getFullPath();
     std::string getRootPath();
     Socket _controlSocket;
+    std::unique_ptr<Socket> _dataSocket;
     std::string _username;
     std::string _password;
     std::string _currentPath;

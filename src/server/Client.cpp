@@ -189,8 +189,8 @@ static std::string doDelete(std::string commandLine, ftp::Client *client) {
 // Client class member functions ----------------------------------------------
 
 ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
-    : _controlSocket(fd, address), _username(""), _password(""),
-    _currentPath(""), _rootPath(rootPath) {
+    : _controlSocket(fd, address), _dataSocket(nullptr), _username(""),
+    _password(""), _currentPath(""), _rootPath(rootPath) {
     _commands["USER"] = doUser;
     _commands["PASS"] = doPass;
     _commands["CWD"] = doCwd;
