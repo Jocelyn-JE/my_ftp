@@ -63,7 +63,7 @@ jobs:
   
   check_cpp_linter:
     name: "Check C++ linter"
-    needs: check_coding_style
+    needs: check_mirror_repo
     runs-on: ubuntu-latest
     container: sharaku/cpplint:latest
     steps:
@@ -76,7 +76,7 @@ jobs:
   
   check_program_compilation:
     name: "Check program compilation"
-    needs: check_coding_style
+    needs: check_cpp_linter, check_coding_style
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker:latest
     steps:
