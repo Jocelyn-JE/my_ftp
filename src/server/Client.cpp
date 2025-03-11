@@ -134,7 +134,7 @@ static std::string doCwd(std::string commandLine, ftp::Client *client) {
         return "501 Syntax error in parameters or arguments.";
     std::string path = commandLine.substr(4);
     try {
-        client->_currentPath = ftp::DirectoryUtility::resolvePath(
+        client->_currentPath = ftp::DirectoryUtility::resolveCanonicalPath(
             client->getRootPath(), client->getFullPath(), path);
     } catch(const std::exception &e) {
         std::cout << e.what() << std::endl;

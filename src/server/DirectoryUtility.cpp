@@ -48,9 +48,15 @@ std::string ftp::DirectoryUtility::resolvePath(std::string const &root,
         throw std::runtime_error(resolvedPath.string() +
             " Access denied: Attempt to escape base directory.");
     }
-    if (!dirExists(resolvedPath.string())) {
-        throw std::runtime_error(resolvedPath.string() +
-            " No such directory.");
-    }
-    return resolvedPath.string().substr(rootPath.string().size());
+    return resolvedPath.string();
+}
+
+std::string ftp::DirectoryUtility::resolveCanonicalPath(std::string const &root,
+    std::string const &currentDirectory, std::string const &path) {
+    std::string resolvedPath = ftp::DirectoryUtility::resolvePath(root,
+        currentDirectory, path);
+    if (!ftp::DirectoryUtility::dirExists(resolvedPath))
+        throw std::runtime_error(resolvedPath + " No such directory.");
+    std::string resolvedRootPath = fs::weakly_canonical(fs::absolute(root));
+    return resolvedPath.substr(resolvedRootPath.size());
 }
