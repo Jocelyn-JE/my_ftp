@@ -28,6 +28,8 @@ static const char helpMessage[] = "Usage: \n"
 "STOR <SP> <pathname> <CRLF>   : Upload file from client to server\n"
 "LIST [<SP> <pathname>] <CRLF> : List files in the current working directory";
 
+// FTP Command functions ------------------------------------------------------
+
 static std::string doNoop(std::string commandLine, ftp::Client *client) {
     (void)client;
     if (commandLine != "NOOP")
@@ -44,14 +46,6 @@ static std::string doQuit(std::string commandLine, ftp::Client *client) {
     return "221 Service closing control connection.";
 }
 
-static std::string clientDisconnect(std::string commandLine,
-    ftp::Client *client) {
-    (void)commandLine;
-    std::cout << "Client " << client->_socket.getSocketFd() << " disconnected"
-        << std::endl;
-    return "";
-}
-
 static std::string doUser(std::string commandLine, ftp::Client *client) {
     std::string tempUser;
 
@@ -61,15 +55,6 @@ static std::string doUser(std::string commandLine, ftp::Client *client) {
     std::cout << "User: " << tempUser << std::endl;
     client->_username = tempUser;
     return "331 User name okay, need password.";
-}
-
-static std::string checkLogin(ftp::Client *client) {
-    if (client->isLoggedIn()) {
-        std::cout << "User successful log in" << std::endl;
-        return "230 User logged in, proceed.";
-    }
-    std::cout << "User failed to log in" << std::endl;
-    return "530 Not logged in.";
 }
 
 static std::string doPass(std::string commandLine, ftp::Client *client) {
@@ -112,7 +97,37 @@ static std::string doHelp(std::string commandLine, ftp::Client *client) {
     return "214 " + std::string(helpMessage) + ".";
 }
 
-//-----------------------------------------------------------------------------
+// Helper functions -----------------------------------------------------------
+
+static std::string clientDisconnect(ftp::Client *client) {
+    std::cout << "Client " << client->_socket.getSocketFd() << " disconnected"
+        << std::endl;
+    return "";
+}
+
+static std::string checkLogin(ftp::Client *client) {
+    if (client->isLoggedIn()) {
+        std::cout << "User successful log in" << std::endl;
+        return "230 User logged in, proceed.";
+    }
+    std::cout << "User failed to log in" << std::endl;
+    return "530 Not logged in.";
+}
+
+// Function to extract the command from the command line and remove CRLF
+static std::string getCommand(const std::string &commandLine) {
+    size_t spacePos = commandLine.find(' ');
+    std::string command = (spacePos == std::string::npos) ? commandLine
+        : commandLine.substr(0, spacePos);
+
+    if (commandLine[0] == ' ')
+        return commandLine;
+    if (command.size() >= 2 && command.substr(command.size() - 2) == "\r\n")
+        command = command.substr(0, command.size() - 2);
+    return command;
+}
+
+// Client class member functions ----------------------------------------------
 
 ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
     : _socket(fd, address), _username(""), _password(""),
@@ -137,24 +152,11 @@ ftp::Client::~Client() {
     std::cout << "Destroying client" << std::endl;
 }
 
-// Function to extract the command from the command line and remove CRLF
-static std::string getCommand(const std::string &commandLine) {
-    size_t spacePos = commandLine.find(' ');
-    std::string command = (spacePos == std::string::npos) ? commandLine
-        : commandLine.substr(0, spacePos);
-
-    if (commandLine[0] == ' ')
-        return commandLine;
-    if (command.size() >= 2 && command.substr(command.size() - 2) == "\r\n")
-        command = command.substr(0, command.size() - 2);
-    return command;
-}
-
 void ftp::Client::handleCommand(std::string commandLine) {
     std::string name = getCommand(commandLine);
 
     if (commandLine == "") {
-        clientDisconnect(commandLine, this);
+        clientDisconnect(this);
         return;
     }
     if (_commands.find(name) == _commands.end()) {
