@@ -65,10 +65,10 @@ static std::string doUser(std::string commandLine, ftp::Client *client) {
 
 static std::string checkLogin(ftp::Client *client) {
     if (client->isLoggedIn()) {
-        std::cout << "User failed to log in" << std::endl;
+        std::cout << "User successful log in" << std::endl;
         return "230 User logged in, proceed.";
     }
-    std::cout << "User successful log in" << std::endl;
+    std::cout << "User failed to log in" << std::endl;
     return "530 Not logged in.";
 }
 
