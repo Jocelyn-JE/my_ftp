@@ -44,6 +44,11 @@ VALGRIND_FLAGS	=	--leak-check=full					\
 					--errors-for-leak-kinds=definite	\
 					--log-file="$(VALGRIND_LOG)"		\
 
+CPPLINTFLAGS	=	--root=./include			\
+					--repository=. 				\
+					--filter=-legal/copyright	\
+					--recursive					\
+
 all: $(NAME)
 
 $(NAME):	$(OBJ) $(MAIN_OBJ)
@@ -88,4 +93,4 @@ cs:	clean
 	rm -f coding-style-reports.log
 
 linter: clean
-	cpplint --root=./include --repository=. --filter=-legal/copyright --recursive ./include/ ./src/
+	cpplint $(CPPLINTFLAGS) ./include/ ./src/
