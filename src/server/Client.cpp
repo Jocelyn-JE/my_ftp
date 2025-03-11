@@ -143,6 +143,28 @@ static std::string doCwd(std::string commandLine, ftp::Client *client) {
     return "250 Requested file action okay, completed.";
 }
 
+static std::string doList(std::string commandLine, ftp::Client *client) {
+    bool pathProvided = false;
+    std::string path;
+
+    if (!client->isLoggedIn())
+        return "530 Not logged in.";
+    if (commandLine != "LIST" && (commandLine.size() < 6 ||
+        commandLine.substr(0, 5) != "LIST "))
+        return "501 Syntax error in parameters or arguments.";
+    if (commandLine.substr(0, 5) == "LIST ")
+        pathProvided = true;
+    try {
+        path = pathProvided ? ftp::DirectoryUtility::resolvePath(
+            client->getRootPath(), client->getFullPath(), commandLine.substr(5))
+            : client->getFullPath();
+    } catch(const std::exception &e) {
+        std::cout << e.what() << std::endl;
+        return "450 Requested file action not taken.";
+    }
+    return "501 " + path;
+}
+
 // Client class member functions ----------------------------------------------
 
 ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
@@ -161,7 +183,7 @@ ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
     _commands["NOOP"] = doNoop;
     // RETR
     // STOR
-    // LIST
+    _commands["LIST"] = doList;
 }
 
 ftp::Client::~Client() {
