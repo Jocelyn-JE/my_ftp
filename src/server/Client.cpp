@@ -8,6 +8,23 @@
 #include "Client.hpp"
 #include "DirectoryUtility.hpp"
 
+static const std::string helpMessage = "Usage: \n\
+USER <SP> <username> <CRLF>   : Specify user for authentication\n\
+PASS <SP> <password> <CRLF>   : Specify password for authentication\n\n\
+CWD  <SP> <pathname> <CRLF>   : Change working directory\n\
+CDUP <CRLF>                   : Change working directory to parent directory\n\n\
+QUIT <CRLF>                   : Disconnection\n\n\
+DELE <SP> <pathname> <CRLF>   : Delete file on the server\n\n\
+PWD  <CRLF>                   : Print working directory\n\n\
+PASV <CRLF>                   : Enable \"passive\" mode for data transfer\n\
+PORT <SP> <host-port> <CRLF>  : Enable \"active\" mode for data transfer\n\n\
+HELP [<SP> <string>] <CRLF>   : List available commands\n\n\
+NOOP <CRLF>                   : Do nothing\n\n\
+(the following are commands using data transfer )\n\n\
+RETR <SP> <pathname> <CRLF>   : Download file from server to client\n\
+STOR <SP> <pathname> <CRLF>   : Upload file from client to server\n\
+LIST [<SP> <pathname>] <CRLF> : List files in the current working directory";
+
 static std::string doNoop(std::string commandLine, ftp::Client &client)
 {
     (void)client;
@@ -91,6 +108,14 @@ static std::string doCdup(std::string commandLine, ftp::Client &client)
     return "200 Command okay.";
 }
 
+static std::string doHelp(std::string commandLine, ftp::Client &client)
+{
+    (void)client;
+    if (commandLine != "HELP")
+        return "501 Syntax error in parameters or arguments.";
+    return "214 " + helpMessage + ".";
+}
+
 //-----------------------------------------------------------------------------
 
 ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
@@ -103,6 +128,7 @@ ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
     _commands["PASS"] = doPass;
     _commands["PWD"] = doPwd;
     _commands["CDUP"] = doCdup;
+    _commands["HELP"] = doHelp;
 }
 
 ftp::Client::~Client()
