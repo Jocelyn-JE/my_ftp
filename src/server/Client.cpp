@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include <memory>
 #include "../../include/Client.hpp"
 #include "../../include/DirectoryUtility.hpp"
 
@@ -167,9 +168,27 @@ static std::string doDelete(std::string commandLine, ftp::Client *client) {
 // FTP Commands that use the data socket functions ----------------------------
 
 static std::string doPasv(std::string commandLine, ftp::Client *client) {
-    (void)commandLine;
-    (void)client;
-    return "502 Not implemented.";
+    if (!client->isLoggedIn())
+        return "530 Not logged in.";
+    if (commandLine != "PASV")
+        return "501 Syntax error in parameters or arguments.";
+    if (client->_dataSocket == nullptr) {
+        client->_dataSocket = std::make_unique<ftp::Socket>(
+            AF_INET, SOCK_STREAM, 0);
+        client->_dataSocket->bindSocket(0);
+        client->_dataSocket->listenSocket(1);
+    }
+    struct sockaddr_in addr = client->_dataSocket->getAddress();
+    uint32_t ip = ntohl(addr.sin_addr.s_addr);
+    uint16_t port = ntohs(addr.sin_port);
+    std::string ipStr = std::to_string((ip >> 24) & 0xFF) + "," +
+                        std::to_string((ip >> 16) & 0xFF) + "," +
+                        std::to_string((ip >> 8) & 0xFF) + "," +
+                        std::to_string(ip & 0xFF);
+    std::string portStr = std::to_string((port >> 8) & 0xFF) + "," +
+                          std::to_string(port & 0xFF);
+
+    return "227 Entering Passive Mode (" + ipStr + "," + portStr + ").";
 }
 
 // Not finished yet
