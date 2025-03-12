@@ -167,6 +167,9 @@ static std::string doDelete(std::string commandLine, ftp::Client *client) {
 
 // FTP Commands that use the data socket functions ----------------------------
 
+// This function creates a new socket on an available port and listens for
+// incoming connections. It then sends the IP and port to the client.
+// The socket must be closed after any data transfer is complete.
 static std::string doPasv(std::string commandLine, ftp::Client *client) {
     if (!client->isLoggedIn())
         return "530 Not logged in.";
