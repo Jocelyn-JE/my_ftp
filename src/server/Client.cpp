@@ -166,6 +166,19 @@ static std::string doDelete(std::string commandLine, ftp::Client *client) {
 
 // FTP Commands that use the data socket functions ----------------------------
 
+static std::string doPasv(std::string commandLine, ftp::Client *client) {
+    (void)commandLine;
+    (void)client;
+    return "501 Not implemented.";
+}
+
+// Not finished yet
+static std::string doPort(std::string commandLine, ftp::Client *client) {
+    (void)commandLine;
+    (void)client;
+    return "501 Not implemented.";
+}
+
 // Not finished yet
 static std::string doList(std::string commandLine, ftp::Client *client) {
     bool pathProvided = false;
@@ -190,6 +203,20 @@ static std::string doList(std::string commandLine, ftp::Client *client) {
     return "501 " + path;
 }
 
+// Not finished yet
+static std::string doRetr(std::string commandLine, ftp::Client *client) {
+    (void)commandLine;
+    (void)client;
+    return "501 Not implemented.";
+}
+
+// Not finished yet
+static std::string doStor(std::string commandLine, ftp::Client *client) {
+    (void)commandLine;
+    (void)client;
+    return "501 Not implemented.";
+}
+
 // Client class member functions ----------------------------------------------
 
 ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
@@ -197,17 +224,17 @@ ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
     _password(""), _currentPath(""), _rootPath(rootPath) {
     _commands["USER"] = doUser;
     _commands["PASS"] = doPass;
-    _commands["CWD"] = doCwd;
+    _commands["CWD"]  = doCwd;
     _commands["CDUP"] = doCdup;
     _commands["QUIT"] = doQuit;
     _commands["DELE"] = doDelete;
-    _commands["PWD"] = doPwd;
-    // PASV
-    // PORT
+    _commands["PWD"]  = doPwd;
+    _commands["PASV"] = doPasv;
+    _commands["PORT"] = doPort;
     _commands["HELP"] = doHelp;
     _commands["NOOP"] = doNoop;
-    // RETR
-    // STOR
+    _commands["RETR"] = doRetr;
+    _commands["STOR"] = doStor;
     _commands["LIST"] = doList;
 }
 
