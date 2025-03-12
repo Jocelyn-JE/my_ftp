@@ -36,7 +36,7 @@ int ftp::runServer(int port, std::string rootPath) {
             poll_result = server.pollSockets();
             server.updateSockets();
         }
-    } catch(const ftp::Socket::SocketError &e) {
+    } catch(const std::exception &e) {
         std::cerr << e.what() << std::endl;
         return 84;
     }
