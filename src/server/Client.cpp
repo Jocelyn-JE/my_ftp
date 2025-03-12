@@ -169,14 +169,14 @@ static std::string doDelete(std::string commandLine, ftp::Client *client) {
 static std::string doPasv(std::string commandLine, ftp::Client *client) {
     (void)commandLine;
     (void)client;
-    return "501 Not implemented.";
+    return "502 Not implemented.";
 }
 
 // Not finished yet
 static std::string doPort(std::string commandLine, ftp::Client *client) {
     (void)commandLine;
     (void)client;
-    return "501 Not implemented.";
+    return "502 Not implemented.";
 }
 
 // Not finished yet
@@ -200,21 +200,21 @@ static std::string doList(std::string commandLine, ftp::Client *client) {
         return "450 Requested file action not taken.";
     }
     // Implement data transfer
-    return "501 " + path;
+    return "502 " + path;
 }
 
 // Not finished yet
 static std::string doRetr(std::string commandLine, ftp::Client *client) {
     (void)commandLine;
     (void)client;
-    return "501 Not implemented.";
+    return "502 Not implemented.";
 }
 
 // Not finished yet
 static std::string doStor(std::string commandLine, ftp::Client *client) {
     (void)commandLine;
     (void)client;
-    return "501 Not implemented.";
+    return "502 Not implemented.";
 }
 
 // Client class member functions ----------------------------------------------
