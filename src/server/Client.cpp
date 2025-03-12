@@ -5,6 +5,7 @@
 ** Client
 */
 
+#include <arpa/inet.h>
 #include <string>
 #include <iostream>
 #include <memory>
@@ -87,6 +88,43 @@ static bool isValidPortArgument(const std::string &portArg) {
     if (num < 1 || num > 65535)
         return false;
     return true;
+}
+
+static std::string getIpString(const std::string &portArg) {
+    std::stringstream ss(portArg);
+    std::vector<int> parts;
+    std::string token;
+    int num;
+
+    // Split the input by commas
+    while (std::getline(ss, token, ',')) {
+        try {
+            num = std::stoi(token);
+            parts.push_back(num);
+        } catch (...) {
+            return "";  // Not a valid number
+        }
+    }
+    return std::to_string(parts[0]) + "." + std::to_string(parts[1]) + "." +
+           std::to_string(parts[2]) + "." + std::to_string(parts[3]);
+}
+
+static int getPortInt(const std::string &portArg) {
+    std::stringstream ss(portArg);
+    std::vector<int> parts;
+    std::string token;
+    int num;
+
+    // Split the input by commas
+    while (std::getline(ss, token, ',')) {
+        try {
+            num = std::stoi(token);
+            parts.push_back(num);
+        } catch (...) {
+            return -1;  // Not a valid number
+        }
+    }
+    return (parts[4] * 256) + parts[5];
 }
 
 // FTP Command functions ------------------------------------------------------
@@ -225,7 +263,8 @@ static std::string doPasv(std::string commandLine, ftp::Client *client) {
     return "227 Entering Passive Mode (" + ipStr + "," + portStr + ").";
 }
 
-// Not finished yet
+// This function creates a new socket and connects to the given IP and port.
+// The socket must be closed after any data transfer is complete.
 static std::string doPort(std::string commandLine, ftp::Client *client) {
     if (!client->isLoggedIn())
         return "530 Not logged in.";
@@ -234,7 +273,17 @@ static std::string doPort(std::string commandLine, ftp::Client *client) {
     std::string address = commandLine.substr(5);
     if (!isValidPortArgument(address))
         return "501 Syntax error in parameters or arguments.";
-    return "502 Not implemented.";
+    if (client->_dataSocket == nullptr) {
+        struct sockaddr_in addr;
+        client->_dataSocket = std::make_unique<ftp::Socket>(
+            AF_INET, SOCK_STREAM, 0);
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(getPortInt(address));
+        addr.sin_addr.s_addr = inet_addr(getIpString(address).c_str());
+        client->_dataSocket->connectSocket((struct sockaddr *) &addr,
+            sizeof(addr));
+    }
+    return "200 Command okay.";
 }
 
 // Not finished yet
