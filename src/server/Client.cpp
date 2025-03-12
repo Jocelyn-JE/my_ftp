@@ -142,6 +142,31 @@ static std::string doCwd(std::string commandLine, ftp::Client *client) {
     return "250 Requested file action okay, completed.";
 }
 
+static std::string doDelete(std::string commandLine, ftp::Client *client) {
+    if (!client->isLoggedIn())
+        return "530 Not logged in.";
+    if (commandLine.size() < 6 || commandLine.substr(0, 5) != "DELE ")
+        return "501 Syntax error in parameters or arguments.";
+    std::string path = commandLine.substr(5);
+    try {
+        path = ftp::DirectoryUtility::resolvePath(client->getRootPath(),
+            client->getFullPath(), path);
+        if (!ftp::DirectoryUtility::fileExists(path))
+            throw std::runtime_error(path + " No such file.");
+    } catch(const std::exception &e) {
+        std::cout << e.what() << std::endl;
+        return "450 Requested file action not taken.";
+    }
+    if (remove(path.c_str()) == -1) {
+        std::cout << "Failed to delete file: " << path << std::endl;
+        return "450 Requested file action not taken.";
+    }
+    return "250 Requested file action okay, completed.";
+}
+
+// FTP Commands that use the data socket functions ----------------------------
+
+// Not finished yet
 static std::string doList(std::string commandLine, ftp::Client *client) {
     bool pathProvided = false;
     std::string path;
@@ -163,28 +188,6 @@ static std::string doList(std::string commandLine, ftp::Client *client) {
     }
     // Implement data transfer
     return "501 " + path;
-}
-
-static std::string doDelete(std::string commandLine, ftp::Client *client) {
-    if (!client->isLoggedIn())
-        return "530 Not logged in.";
-    if (commandLine.size() < 6 || commandLine.substr(0, 5) != "DELE ")
-        return "501 Syntax error in parameters or arguments.";
-    std::string path = commandLine.substr(5);
-    try {
-        path = ftp::DirectoryUtility::resolvePath(client->getRootPath(),
-            client->getFullPath(), path);
-        if (!ftp::DirectoryUtility::fileExists(path))
-            throw std::runtime_error(path + " No such file.");
-    } catch(const std::exception &e) {
-        std::cout << e.what() << std::endl;
-        return "450 Requested file action not taken.";
-    }
-    if (remove(path.c_str()) == -1) {
-        std::cout << "Failed to delete file: " << path << std::endl;
-        return "450 Requested file action not taken.";
-    }
-    return "250 Requested file action okay, completed.";
 }
 
 // Client class member functions ----------------------------------------------
