@@ -75,6 +75,13 @@ void ftp::Socket::listenSocket(int backlog) {
             std::string(strerror(errno)));
 }
 
+void ftp::Socket::connectSocket(const struct sockaddr *address,
+    socklen_t addressLen) {
+    if (connect(_socketFd, address, addressLen) == -1)
+        throw ftp::Socket::SocketError("Connect failed: " +
+            std::string(strerror(errno)));
+}
+
 ftp::Socket::SocketError::SocketError(std::string message) {
     _message = message;
 }

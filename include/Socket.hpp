@@ -23,6 +23,7 @@ class Socket {
     struct sockaddr_in getAddress();
     void bindSocket(uint16_t port);
     void listenSocket(int backlog);
+    void connectSocket(const struct sockaddr *address, socklen_t addressLen);
     void writeToSocket(std::string);
     std::string readFromSocket();
     void closeSocket();
