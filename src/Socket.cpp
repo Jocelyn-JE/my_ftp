@@ -63,7 +63,8 @@ void ftp::Socket::bindSocket(uint16_t port) {
         sizeof(_address)) == -1)
         throw ftp::Socket::SocketError("Bind failed: " +
             std::string(strerror(errno)));
-    if (getsockname(_socketFd, (struct sockaddr *) &_address, NULL) == -1)
+    socklen_t len = sizeof(_address);
+    if (getsockname(_socketFd, (struct sockaddr *) &_address, &len) == -1)
         throw ftp::Socket::SocketError("Getsockname failed: " +
             std::string(strerror(errno)));
 }
