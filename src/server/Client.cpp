@@ -247,7 +247,7 @@ void ftp::Client::handleCommand(std::string commandLine) {
 
     if (commandLine == "")
         return clientDisconnect(this);
-    if (_commands.find(name) == _commands.end())
+    if (_commands.find(name) == _commands.end() || commandLine.length() > 512)
         return _controlSocket.writeToSocket(
             "500 Syntax error, command unrecognized.");
     _controlSocket.writeToSocket(
