@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include <vector>
 #include "../../include/Client.hpp"
 #include "../../include/DirectoryUtility.hpp"
 
@@ -56,6 +57,36 @@ static std::string getCommand(const std::string &commandLine) {
     if (command.size() >= 2 && command.substr(command.size() - 2) == "\r\n")
         command = command.substr(0, command.size() - 2);
     return command;
+}
+
+static bool isValidPortArgument(const std::string &portArg) {
+    std::stringstream ss(portArg);
+    std::vector<int> parts;
+    std::string token;
+    int num;
+
+    // Split the input by commas
+    while (std::getline(ss, token, ',')) {
+        try {
+            num = std::stoi(token);
+            parts.push_back(num);
+        } catch (...) {
+            return false;  // Not a valid number
+        }
+    }
+    // Must have exactly 6 parts (h1, h2, h3, h4, p1, p2)
+    if (parts.size() != 6)
+        return false;
+    // Validate IP address (h1-h4) must be in range [0,255]
+    for (int part : parts) {
+        if (part < 0 || part > 255)
+            return false;
+    }
+    // Validate port number (p1, p2)
+    num = (parts[4] * 256) + parts[5];
+    if (num < 1 || num > 65535)
+        return false;
+    return true;
 }
 
 // FTP Command functions ------------------------------------------------------
@@ -196,8 +227,13 @@ static std::string doPasv(std::string commandLine, ftp::Client *client) {
 
 // Not finished yet
 static std::string doPort(std::string commandLine, ftp::Client *client) {
-    (void)commandLine;
-    (void)client;
+    if (!client->isLoggedIn())
+        return "530 Not logged in.";
+    if (commandLine.size() < 5 + 11 || commandLine.substr(0, 5) != "PORT ")
+        return "501 Syntax error in parameters or arguments.";
+    std::string address = commandLine.substr(5);
+    if (!isValidPortArgument(address))
+        return "501 Syntax error in parameters or arguments.";
     return "502 Not implemented.";
 }
 
