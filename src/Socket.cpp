@@ -113,3 +113,7 @@ std::string ftp::Socket::readFromSocket() {
 struct sockaddr_in ftp::Socket::getAddress() {
     return _address;
 }
+
+void ftp::Socket::setCloseOnDestroy(bool closeOnDestroy) {
+    _closeSocketOnDestruction = closeOnDestroy;
+}

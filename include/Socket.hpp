@@ -27,6 +27,7 @@ class Socket {
     std::string readFromSocket();
     void closeSocket();
     bool closesOnDestroy();
+    void setCloseOnDestroy(bool closeOnDestroy);
     class SocketError : public std::exception {
      public:
         explicit SocketError(std::string message);
