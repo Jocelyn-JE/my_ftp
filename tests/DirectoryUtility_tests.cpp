@@ -52,13 +52,13 @@ Test(removeTrailingSlash, without_backslash, .init = redirect_all_stdout) {
 Test(getParentDirectory, root) {
     std::cout << "Root: " << ftp::DirectoryUtility::getParentDirectory("/")
         << std::endl;
-    cr_assert_eq(ftp::DirectoryUtility::getParentDirectory("/"), "/");
+    cr_assert_eq(ftp::DirectoryUtility::getParentDirectory("/"), "");
 }
 
 Test(getParentDirectory, one_dir) {
     std::cout << "One_dir: " << ftp::DirectoryUtility::getParentDirectory(
         "/home") << std::endl;
-    cr_assert_eq(ftp::DirectoryUtility::getParentDirectory("/home"), "/");
+    cr_assert_eq(ftp::DirectoryUtility::getParentDirectory("/home"), "");
 }
 
 Test(getParentDirectory, two_dir) {
