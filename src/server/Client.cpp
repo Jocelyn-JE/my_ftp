@@ -225,11 +225,11 @@ static std::string doDelete(std::string commandLine, ftp::Client *client) {
             throw std::runtime_error(path + " No such file.");
     } catch(const std::exception &e) {
         std::cout << e.what() << std::endl;
-        return "450 Requested file action not taken.";
+        return "550 Requested file action not taken. File unavailable";
     }
     if (remove(path.c_str()) == -1) {
         std::cout << "Failed to delete file: " << path << std::endl;
-        return "450 Requested file action not taken.";
+        return "550 Requested file action not taken. File unavailable";
     }
     return "250 Requested file action okay, completed.";
 }
