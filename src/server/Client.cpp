@@ -184,6 +184,8 @@ static std::string doCdup(std::string commandLine, ftp::Client *client) {
         return "530 Not logged in.";
     if (commandLine != "CDUP")
         return "501 Syntax error in parameters or arguments.";
+    if (client->_currentPath == "")
+        return "550 Requested action not taken.";
     client->_currentPath = ftp::DirectoryUtility::getParentDirectory(
         client->_currentPath);
     return "200 Command okay.";
