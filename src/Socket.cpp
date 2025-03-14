@@ -117,7 +117,7 @@ std::string ftp::Socket::readFromSocket() {
     return buffer;
 }
 
-struct sockaddr_in ftp::Socket::getAddress() {
+struct sockaddr_in ftp::Socket::getAddress() const {
     return _address;
 }
 

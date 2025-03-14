@@ -20,7 +20,7 @@ class Socket {
     Socket(int domain, int type, int protocol);
     ~Socket() noexcept(false);
     int getSocketFd() const;
-    struct sockaddr_in getAddress();
+    struct sockaddr_in getAddress() const;
     void bindSocket(uint16_t port);
     void listenSocket(int backlog);
     void connectSocket(const struct sockaddr *address, socklen_t addressLen);
