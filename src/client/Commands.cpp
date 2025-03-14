@@ -34,8 +34,8 @@ static const char helpMessage[] = "Usage: \n"
 
 // Helper functions -----------------------------------------------------------
 
-static std::string checkLogin(ftp::Client *client) {
-    if (client->isLoggedIn()) {
+static std::string checkLogin(ftp::Client const &client) {
+    if (client.isLoggedIn()) {
         std::cout << "User successful log in" << std::endl;
         return "230 User logged in, proceed.";
     }
@@ -76,7 +76,7 @@ static bool isValidPortArgument(const std::string &portArg) {
 // FTP Commands that only use the control socket functions --------------------
 
 std::string ftp::Client::Commands::doNoop(std::string commandLine,
-    ftp::Client *client) {
+    ftp::Client &client) {
     (void)client;
     if (commandLine != "NOOP")
         return "501 Syntax error in parameters or arguments.";
@@ -84,67 +84,67 @@ std::string ftp::Client::Commands::doNoop(std::string commandLine,
 }
 
 std::string ftp::Client::Commands::doQuit(std::string commandLine,
-    ftp::Client *client) {
+    ftp::Client &client) {
     (void)commandLine;
     if (commandLine != "QUIT")
         return "501 Syntax error in parameters or arguments.";
-    std::cout << "Disconnected client " << client->_controlSocket.getSocketFd()
+    std::cout << "Disconnected client " << client._controlSocket.getSocketFd()
         << std::endl;
     return "221 Service closing control connection.";
 }
 
 std::string ftp::Client::Commands::doUser(std::string commandLine,
-    ftp::Client *client) {
+    ftp::Client &client) {
     std::string tempUser;
 
     if (commandLine.size() < 6 || commandLine.substr(0, 5) != "USER ")
         return "501 Syntax error in parameters or arguments.";
     tempUser = commandLine.substr(5);
     std::cout << "User: " << tempUser << std::endl;
-    client->_username = tempUser;
+    client._username = tempUser;
     return "331 User name okay, need password.";
 }
 
 std::string ftp::Client::Commands::doPass(std::string commandLine,
-    ftp::Client *client) {
+    ftp::Client &client) {
     std::string tempPass;
 
-    if (client->_username == "")
+    if (client._username == "")
         return "332 Need account for login.";
     if (commandLine.size() < 5 || commandLine.substr(0, 5) != "PASS ")
         return "501 Syntax error in parameters or arguments.";
-    if (client->_username == "")
+    if (client._username == "")
         return "503 Bad sequence of commands.";
     tempPass = commandLine.substr(5);
     std::cout << "Pass: " << tempPass << std::endl;
-    client->_password = tempPass;
+    client._password = tempPass;
     return checkLogin(client);
 }
 
 std::string ftp::Client::Commands::doPwd(std::string commandLine,
-    ftp::Client *client) {
-    if (!client->isLoggedIn())
+    ftp::Client &client) {
+    if (!client.isLoggedIn())
         return "530 Not logged in.";
     if (commandLine != "PWD")
         return "501 Syntax error in parameters or arguments.";
-    return "257 \"" + client->getFullPath() + "\" is the current directory.";
+    return "257 \"" + client.getFullPath() + "\" is the current directory.";
 }
 
 std::string ftp::Client::Commands::doCdup(std::string commandLine,
-    ftp::Client *client) {
-    if (!client->isLoggedIn())
+    ftp::Client &client) {
+    if (!client.isLoggedIn())
         return "530 Not logged in.";
     if (commandLine != "CDUP")
         return "501 Syntax error in parameters or arguments.";
-    if (client->_currentPath == "")
+    if (client._currentPath == "")
         return "550 Requested action not taken.";
-    client->_currentPath = ftp::DirectoryUtility::getParentDirectory(
-        client->_currentPath);
+    client._currentPath = ftp::DirectoryUtility::getParentDirectory(
+        client._currentPath);
     return "200 Command okay.";
 }
 
 std::string ftp::Client::Commands::doHelp(std::string commandLine,
-    ftp::Client *client) {
+    ftp::Client &client) {
     (void)client;
     if (commandLine != "HELP")
         return "501 Syntax error in parameters or arguments.";
@@ -152,15 +152,15 @@ std::string ftp::Client::Commands::doHelp(std::string commandLine,
 }
 
 std::string ftp::Client::Commands::doCwd(std::string commandLine,
-    ftp::Client *client) {
-    if (!client->isLoggedIn())
+    ftp::Client &client) {
+    if (!client.isLoggedIn())
         return "530 Not logged in.";
     if (commandLine.size() < 5 || commandLine.substr(0, 4) != "CWD ")
         return "501 Syntax error in parameters or arguments.";
     std::string path = commandLine.substr(4);
     try {
-        client->_currentPath = ftp::DirectoryUtility::resolveCanonicalPath(
-            client->getRootPath(), client->getFullPath(), path);
+        client._currentPath = ftp::DirectoryUtility::resolveCanonicalPath(
+            client.getRootPath(), client.getFullPath(), path);
     } catch(const std::exception &e) {
         std::cout << e.what() << std::endl;
         return "550 Requested action not taken.";
@@ -169,15 +169,15 @@ std::string ftp::Client::Commands::doCwd(std::string commandLine,
 }
 
 std::string ftp::Client::Commands::doDelete(std::string commandLine,
-    ftp::Client *client) {
-    if (!client->isLoggedIn())
+    ftp::Client &client) {
+    if (!client.isLoggedIn())
         return "530 Not logged in.";
     if (commandLine.size() < 6 || commandLine.substr(0, 5) != "DELE ")
         return "501 Syntax error in parameters or arguments.";
     std::string path = commandLine.substr(5);
     try {
-        path = ftp::DirectoryUtility::resolvePath(client->getRootPath(),
-            client->getFullPath(), path);
+        path = ftp::DirectoryUtility::resolvePath(client.getRootPath(),
+            client.getFullPath(), path);
         if (!ftp::DirectoryUtility::fileExists(path))
             throw std::runtime_error(path + " No such file.");
     } catch(const std::exception &e) {
@@ -197,47 +197,47 @@ std::string ftp::Client::Commands::doDelete(std::string commandLine,
 // incoming connections. It then sends the IP and port to the client.
 // The socket must be closed after any data transfer is complete.
 std::string ftp::Client::Commands::doPasv(std::string commandLine,
-    ftp::Client *client) {
-    if (!client->isLoggedIn())
+    ftp::Client &client) {
+    if (!client.isLoggedIn())
         return "530 Not logged in.";
     if (commandLine != "PASV")
         return "501 Syntax error in parameters or arguments.";
-    if (client->_dataSocket == nullptr)
-        client->_dataSocket = std::make_unique<ftp::PasvDataSocket>();
-    return "227 Entering Passive Mode (" + client->_dataSocket->getIpStr()
-        + "," + client->_dataSocket->getPortStr() + ").";
+    if (client._dataSocket == nullptr)
+        client._dataSocket = std::make_unique<ftp::PasvDataSocket>();
+    return "227 Entering Passive Mode (" + client._dataSocket->getIpStr()
+        + "," + client._dataSocket->getPortStr() + ").";
 }
 
 // This function creates a new socket and connects to the given IP and port.
 // The socket must be closed after any data transfer is complete.
 std::string ftp::Client::Commands::doPort(std::string commandLine,
-    ftp::Client *client) {
-    if (!client->isLoggedIn())
+    ftp::Client &client) {
+    if (!client.isLoggedIn())
         return "530 Not logged in.";
     if (commandLine.size() < 5 + 11 || commandLine.substr(0, 5) != "PORT ")
         return "501 Syntax error in parameters or arguments.";
     std::string address = commandLine.substr(5);
     if (!isValidPortArgument(address))
         return "501 Syntax error in parameters or arguments.";
-    if (client->_dataSocket == nullptr)
-        client->_dataSocket = std::make_unique<ftp::PortDataSocket>(address);
+    if (client._dataSocket == nullptr)
+        client._dataSocket = std::make_unique<ftp::PortDataSocket>(address);
     return "200 Command okay.";
 }
 
 // Not finished yet
 std::string ftp::Client::Commands::doList(std::string commandLine,
-    ftp::Client *client) {
+    ftp::Client &client) {
     std::string path;
 
-    if (!client->isLoggedIn())
+    if (!client.isLoggedIn())
         return "530 Not logged in.";
     if (commandLine != "LIST" && (commandLine.size() < 6 ||
         commandLine.substr(0, 5) != "LIST "))
         return "501 Syntax error in parameters or arguments.";
     try {
         path = commandLine.substr(0, 5) == "LIST " ? ftp::DirectoryUtility::
-            resolvePath(client->getRootPath(), client->getFullPath(),
-            commandLine.substr(5)) : client->getFullPath();
+            resolvePath(client.getRootPath(), client.getFullPath(),
+            commandLine.substr(5)) : client.getFullPath();
     } catch(const std::exception &e) {
         std::cout << e.what() << std::endl;
         return "450 Requested file action not taken.";
@@ -248,27 +248,27 @@ std::string ftp::Client::Commands::doList(std::string commandLine,
         return "450 Requested file action not taken.";
     }
     if (pid == 0) {
-        if (client->_dataSocket == nullptr)
+        if (client._dataSocket == nullptr)
             return "425 Can't open data connection.";
         std::cout << "List command child connecting to client" << std::endl;
-        client->_dataSocket->connectToClient();
+        client._dataSocket->connectToClient();
         std::cout << "List command child writing to dataSocket" << std::endl;
-        client->_dataSocket->writeToClient("TEST");
+        client._dataSocket->writeToClient("TEST");
         std::cout << "List command child writing to controlSocket" << std::endl;
-        client->_controlSocket.writeToSocket("226 Transfer complete; "
+        client._controlSocket.writeToSocket("226 Transfer complete; "
             "Closing data connection.");
         std::cout << "List command child exiting" << std::endl;
         std::exit(0);
     } else {
         std::cout << "List command parent destroying _dataSocket" << std::endl;
-        client->_dataSocket.reset(nullptr);
+        client._dataSocket.reset(nullptr);
     }
     return "150 File status okay; about to open data connection.";
 }
 
 // Not finished yet
 std::string ftp::Client::Commands::doRetr(std::string commandLine,
-    ftp::Client *client) {
+    ftp::Client &client) {
     (void)commandLine;
     (void)client;
     return "502 Not implemented.";
@@ -276,7 +276,7 @@ std::string ftp::Client::Commands::doRetr(std::string commandLine,
 
 // Not finished yet
 std::string ftp::Client::Commands::doStor(std::string commandLine,
-    ftp::Client *client) {
+    ftp::Client &client) {
     (void)commandLine;
     (void)client;
     return "502 Not implemented.";
