@@ -19,12 +19,13 @@ MAIN_SRC		=	src/Main.cpp
 SRC				=	src/server/Server.cpp				\
 					src/server/RunServer.cpp			\
 					src/server/PollFdList.cpp			\
-					src/server/Client.cpp				\
 					src/parsing/DirectoryUtility.cpp	\
 					src/parsing/Parser.cpp				\
-					src/Socket.cpp						\
-					src/server/PasvDataSocket.cpp		\
-					src/server/PortDataSocket.cpp		\
+					src/sockets/PasvDataSocket.cpp		\
+					src/sockets/PortDataSocket.cpp		\
+					src/sockets/Socket.cpp				\
+					src/client/Client.cpp				\
+					src/client/Commands.cpp				\
 
 TESTS_SRC		=	tests/DirectoryUtility_tests.cpp	\
 
