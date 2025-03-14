@@ -12,6 +12,9 @@
 #include <vector>
 #include "../../include/Client.hpp"
 #include "../../include/DirectoryUtility.hpp"
+#include "../../include/PasvDataSocket.hpp"
+#include "../../include/PortDataSocket.hpp"
+
 
 static const char helpMessage[] = "Usage: \n"
 "USER <SP> <username> <CRLF>   : Specify user for authentication\n"
@@ -209,23 +212,10 @@ static std::string doPasv(std::string commandLine, ftp::Client *client) {
         return "530 Not logged in.";
     if (commandLine != "PASV")
         return "501 Syntax error in parameters or arguments.";
-    if (client->_dataSocket == nullptr) {
-        client->_dataSocket = std::make_unique<ftp::Socket>(
-            AF_INET, SOCK_STREAM, 0);
-        client->_dataSocket->bindSocket(0);
-        client->_dataSocket->listenSocket(1);
-    }
-    struct sockaddr_in addr = client->_dataSocket->getAddress();
-    uint32_t ip = ntohl(addr.sin_addr.s_addr);
-    uint16_t port = ntohs(addr.sin_port);
-    std::string ipStr = std::to_string((ip >> 24) & 0xFF) + "," +
-                        std::to_string((ip >> 16) & 0xFF) + "," +
-                        std::to_string((ip >> 8) & 0xFF) + "," +
-                        std::to_string(ip & 0xFF);
-    std::string portStr = std::to_string((port >> 8) & 0xFF) + "," +
-                          std::to_string(port & 0xFF);
-
-    return "227 Entering Passive Mode (" + ipStr + "," + portStr + ").";
+    if (client->_dataSocket == nullptr)
+        client->_dataSocket = std::make_unique<ftp::PasvDataSocket>();
+    return "227 Entering Passive Mode (" + client->_dataSocket->getIpStr()
+        + "," + client->_dataSocket->getPortStr() + ").";
 }
 
 // This function creates a new socket and connects to the given IP and port.
@@ -238,16 +228,8 @@ static std::string doPort(std::string commandLine, ftp::Client *client) {
     std::string address = commandLine.substr(5);
     if (!isValidPortArgument(address))
         return "501 Syntax error in parameters or arguments.";
-    if (client->_dataSocket == nullptr) {
-        struct sockaddr_in addr;
-        client->_dataSocket = std::make_unique<ftp::Socket>(
-            AF_INET, SOCK_STREAM, 0);
-        addr.sin_family = AF_INET;
-        addr.sin_port = htons(getPortInt(address));
-        addr.sin_addr.s_addr = inet_addr(getIpString(address).c_str());
-        client->_dataSocket->connectSocket((struct sockaddr *) &addr,
-            sizeof(addr));
-    }
+    if (client->_dataSocket == nullptr)
+        client->_dataSocket = std::make_unique<ftp::PortDataSocket>(address);
     return "200 Command okay.";
 }
 
@@ -271,8 +253,29 @@ static std::string doList(std::string commandLine, ftp::Client *client) {
         std::cout << e.what() << std::endl;
         return "450 Requested file action not taken.";
     }
-    // Implement data transfer
-    return "502 " + path;
+    if (client->_dataSocket == nullptr)
+        return "425 Can't open data connection.";
+    int pid = fork();
+    if (pid == -1) {
+        std::cout << "Failed to fork process" << std::endl;
+        return "450 Requested file action not taken.";
+    }
+    if (pid == 0) {
+        std::cout << "List command child connecting to client" << std::endl;
+        client->_dataSocket->connectToClient();
+        std::cout << "List command child writing to dataSocket" << std::endl;
+        client->_dataSocket->writeToClient("TEST");
+        std::cout << "List command child writing to controlSocket" << std::endl;
+        client->_controlSocket.writeToSocket("226 Transfer complete; "
+            "Closing data connection.");
+        std::cout << "List command child exiting" << std::endl;
+        throw std::runtime_error("Exiting child process");
+    } else {
+        std::cout << "List command parent destroying _dataSocket" << std::endl;
+        delete client->_dataSocket.release();
+        client->_dataSocket = nullptr;
+    }
+    return "150 File status okay; about to open data connection.";
 }
 
 // Not finished yet

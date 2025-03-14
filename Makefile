@@ -23,6 +23,8 @@ SRC				=	src/server/Server.cpp			\
 					src/server/DirectoryUtility.cpp	\
 					src/Parser.cpp					\
 					src/Socket.cpp					\
+					src/server/PasvDataSocket.cpp	\
+					src/server/PortDataSocket.cpp	\
 
 TESTS_SRC		=	tests/DirectoryUtility_tests.cpp\
 
