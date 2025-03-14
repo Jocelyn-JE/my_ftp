@@ -10,7 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "../include/DirectoryUtility.hpp"
+#include "parsing/DirectoryUtility.hpp"
 
 static void redirect_all_stdout(void) {
     cr_redirect_stdout();
