@@ -47,6 +47,7 @@ class Client {
         static std::string doList(std::string commandLine, Client *client);
         static std::string doStor(std::string commandLine, Client *client);
     };
+
  private:
     std::unordered_map<std::string, std::function<std::string(std::string,
         Client *)>> _commands;
