@@ -90,43 +90,6 @@ static bool isValidPortArgument(const std::string &portArg) {
     return true;
 }
 
-static std::string getIpString(const std::string &portArg) {
-    std::stringstream ss(portArg);
-    std::vector<int> parts;
-    std::string token;
-    int num;
-
-    // Split the input by commas
-    while (std::getline(ss, token, ',')) {
-        try {
-            num = std::stoi(token);
-            parts.push_back(num);
-        } catch (...) {
-            return "";  // Not a valid number
-        }
-    }
-    return std::to_string(parts[0]) + "." + std::to_string(parts[1]) + "." +
-           std::to_string(parts[2]) + "." + std::to_string(parts[3]);
-}
-
-static int getPortInt(const std::string &portArg) {
-    std::stringstream ss(portArg);
-    std::vector<int> parts;
-    std::string token;
-    int num;
-
-    // Split the input by commas
-    while (std::getline(ss, token, ',')) {
-        try {
-            num = std::stoi(token);
-            parts.push_back(num);
-        } catch (...) {
-            return -1;  // Not a valid number
-        }
-    }
-    return (parts[4] * 256) + parts[5];
-}
-
 // FTP Command functions ------------------------------------------------------
 
 static std::string doNoop(std::string commandLine, ftp::Client *client) {
