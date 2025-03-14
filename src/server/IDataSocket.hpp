@@ -5,8 +5,8 @@
 ** IDataSocket
 */
 
-#ifndef IDATASOCKET_HPP_
-    #define IDATASOCKET_HPP_
+#ifndef SRC_SERVER_IDATASOCKET_HPP_
+    #define SRC_SERVER_IDATASOCKET_HPP_
     #include <string>
 
 namespace ftp {
@@ -21,4 +21,4 @@ class IDataSocket {
 };
 }  // namespace ftp
 
-#endif  // IDATASOCKET_HPP_
+#endif  // SRC_SERVER_IDATASOCKET_HPP_

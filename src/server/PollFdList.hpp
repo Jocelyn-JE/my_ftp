@@ -5,8 +5,8 @@
 ** PollFdList
 */
 
-#ifndef POLLFDLIST_HPP_
-    #define POLLFDLIST_HPP_
+#ifndef SRC_SERVER_POLLFDLIST_HPP_
+    #define SRC_SERVER_POLLFDLIST_HPP_
 
     #include <poll.h>
     #include <vector>
@@ -23,4 +23,4 @@ class PollFdList : public std::vector<struct pollfd> {
 };
 }  // namespace ftp
 
-#endif  // POLLFDLIST_HPP_
+#endif  // SRC_SERVER_POLLFDLIST_HPP_

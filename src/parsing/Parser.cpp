@@ -7,8 +7,8 @@
 
 #include <iostream>
 #include <string>
-#include "../include/Parser.hpp"
-#include "../include/DirectoryUtility.hpp"
+#include "parsing/Parser.hpp"
+#include "parsing/DirectoryUtility.hpp"
 
 ftp::Parser::Parser(int argc, char **argv) : _args(argv, argv + argc),
     _argc(argc) {

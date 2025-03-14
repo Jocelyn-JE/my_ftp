@@ -16,23 +16,23 @@ NAME			=	myftp
 
 MAIN_SRC		=	src/Main.cpp
 
-SRC				=	src/server/Server.cpp			\
-					src/server/RunServer.cpp		\
-					src/server/PollFdList.cpp		\
-					src/server/Client.cpp			\
-					src/server/DirectoryUtility.cpp	\
-					src/Parser.cpp					\
-					src/Socket.cpp					\
-					src/server/PasvDataSocket.cpp	\
-					src/server/PortDataSocket.cpp	\
+SRC				=	src/server/Server.cpp				\
+					src/server/RunServer.cpp			\
+					src/server/PollFdList.cpp			\
+					src/server/Client.cpp				\
+					src/parsing/DirectoryUtility.cpp	\
+					src/parsing/Parser.cpp				\
+					src/Socket.cpp						\
+					src/server/PasvDataSocket.cpp		\
+					src/server/PortDataSocket.cpp		\
 
-TESTS_SRC		=	tests/DirectoryUtility_tests.cpp\
+TESTS_SRC		=	tests/DirectoryUtility_tests.cpp	\
 
 OBJ				=	$(SRC:.cpp=.o)
 
 MAIN_OBJ		=	$(MAIN_SRC:.cpp=.o)
 
-INCLUDES		=	-I ./include
+INCLUDES		=	-I ./src -I ./
 
 CPPFLAGS		+=	-std=c++20 -Wall -Wextra -Werror $(INCLUDES) -O2 -g
 

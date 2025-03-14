@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <string>
 #include <iostream>
-#include "../../include/Server.hpp"
+#include "server/Server.hpp"
 
 ftp::Server::Server(int port, std::string rootPath) :
     _serverSocket(AF_INET, SOCK_STREAM, 0),

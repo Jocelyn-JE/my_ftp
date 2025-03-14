@@ -5,8 +5,8 @@
 ** Client
 */
 
-#ifndef CLIENT_HPP_
-    #define CLIENT_HPP_
+#ifndef SRC_SERVER_CLIENT_HPP_
+    #define SRC_SERVER_CLIENT_HPP_
 
     #include <bits/stdc++.h>
     #include <unordered_map>
@@ -37,4 +37,4 @@ class Client {
 };
 }  // namespace ftp
 
-#endif  // CLIENT_HPP_
+#endif  // SRC_SERVER_CLIENT_HPP_

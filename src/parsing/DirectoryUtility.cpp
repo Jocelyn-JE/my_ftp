@@ -9,7 +9,7 @@
 #include <string>
 #include <filesystem>
 namespace fs = std::filesystem;
-#include "../../include/DirectoryUtility.hpp"
+#include "parsing/DirectoryUtility.hpp"
 
 std::string ftp::DirectoryUtility::getParentDirectory(const std::string &path) {
     size_t lastSlash = path.find_last_of('/');

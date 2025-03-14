@@ -8,9 +8,9 @@
 #include <signal.h>
 #include <iostream>
 #include <string>
-#include "../../include/RunServer.hpp"
-#include "../../include/Server.hpp"
-#include "../../include/DirectoryUtility.hpp"
+#include "server/RunServer.hpp"
+#include "server/Server.hpp"
+#include "parsing/DirectoryUtility.hpp"
 
 volatile sig_atomic_t stopFlag = 0;
 

@@ -6,9 +6,9 @@
 */
 
 #include <iostream>
-#include "../include/Server.hpp"
-#include "../include/Parser.hpp"
-#include "../include/RunServer.hpp"
+#include "server/Server.hpp"
+#include "parsing/Parser.hpp"
+#include "server/RunServer.hpp"
 
 int main(int argc, char **argv) {
     ftp::Parser parser(argc, argv);

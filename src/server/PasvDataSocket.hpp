@@ -5,8 +5,8 @@
 ** Datasocket
 */
 
-#ifndef PASVDATASOCKET_HPP_
-    #define PASVDATASOCKET_HPP_
+#ifndef SRC_SERVER_PASVDATASOCKET_HPP_
+    #define SRC_SERVER_PASVDATASOCKET_HPP_
     #include <string>
     #include <memory>
     #include "Socket.hpp"
@@ -28,4 +28,4 @@ class PasvDataSocket : private Socket, public IDataSocket {
 };  // class PasvDataSocket
 }  // namespace ftp
 
-#endif  // PASVDATASOCKET_HPP_
+#endif  // SRC_SERVER_PASVDATASOCKET_HPP_

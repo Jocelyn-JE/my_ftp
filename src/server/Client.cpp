@@ -10,10 +10,10 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "../../include/Client.hpp"
-#include "../../include/DirectoryUtility.hpp"
-#include "../../include/PasvDataSocket.hpp"
-#include "../../include/PortDataSocket.hpp"
+#include "server/Client.hpp"
+#include "parsing/DirectoryUtility.hpp"
+#include "server/PasvDataSocket.hpp"
+#include "server/PortDataSocket.hpp"
 
 
 static const char helpMessage[] = "Usage: \n"

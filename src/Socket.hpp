@@ -5,8 +5,8 @@
 ** Socket
 */
 
-#ifndef SOCKET_HPP_
-    #define SOCKET_HPP_
+#ifndef SRC_SOCKET_HPP_
+    #define SRC_SOCKET_HPP_
 
     #include <netinet/in.h>
     #include <string>
@@ -45,4 +45,4 @@ class Socket {
 };
 }  // namespace ftp
 
-#endif  // SOCKET_HPP_
+#endif  // SRC_SOCKET_HPP_

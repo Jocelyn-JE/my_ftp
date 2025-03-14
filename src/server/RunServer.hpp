@@ -5,8 +5,8 @@
 ** RunServer
 */
 
-#ifndef RUNSERVER_HPP_
-    #define RUNSERVER_HPP_
+#ifndef SRC_SERVER_RUNSERVER_HPP_
+    #define SRC_SERVER_RUNSERVER_HPP_
 
     #include <string>
 
@@ -14,4 +14,4 @@ namespace ftp {
 int runServer(int port, std::string rootPath);
 }
 
-#endif  // RUNSERVER_HPP_
+#endif  // SRC_SERVER_RUNSERVER_HPP_

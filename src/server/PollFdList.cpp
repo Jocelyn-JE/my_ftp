@@ -5,7 +5,7 @@
 ** PollFdList
 */
 
-#include "../../include/PollFdList.hpp"
+#include "server/PollFdList.hpp"
 
 ftp::PollFdList::PollFdList(int serverSocket) {
     addSocket(serverSocket, POLLIN);

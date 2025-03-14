@@ -5,8 +5,8 @@
 ** Server
 */
 
-#ifndef SERVER_HPP_
-    #define SERVER_HPP_
+#ifndef SRC_SERVER_SERVER_HPP_
+    #define SRC_SERVER_SERVER_HPP_
 
     #include <memory>
     #include <vector>
@@ -35,4 +35,4 @@ class Server {
 };
 }  // namespace ftp
 
-#endif  // SERVER_HPP_
+#endif  // SRC_SERVER_SERVER_HPP_

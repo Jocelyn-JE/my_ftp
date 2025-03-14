@@ -5,8 +5,8 @@
 ** Parser
 */
 
-#ifndef PARSER_HPP_
-    #define PARSER_HPP_
+#ifndef SRC_PARSING_PARSER_HPP_
+    #define SRC_PARSING_PARSER_HPP_
 
     #include <exception>
     #include <string>
@@ -34,4 +34,4 @@ class Parser {
 };
 }  // namespace ftp
 
-#endif  // PARSER_HPP_
+#endif  // SRC_PARSING_PARSER_HPP_

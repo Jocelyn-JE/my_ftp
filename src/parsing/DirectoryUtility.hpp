@@ -5,12 +5,11 @@
 ** DirectoryUtility
 */
 
-#ifndef DIRECTORYUTILITY_HPP_
-    #define DIRECTORYUTILITY_HPP_
+#ifndef SRC_PARSING_DIRECTORYUTILITY_HPP_
+    #define SRC_PARSING_DIRECTORYUTILITY_HPP_
 
     #include <bits/stdc++.h>
     #include <string>
-    #include "Socket.hpp"
 
 namespace ftp {
 class DirectoryUtility {
@@ -26,4 +25,4 @@ class DirectoryUtility {
 };
 }  // namespace ftp
 
-#endif  // DIRECTORYUTILITY_HPP_
+#endif  // SRC_PARSING_DIRECTORYUTILITY_HPP_
