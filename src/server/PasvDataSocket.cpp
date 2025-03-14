@@ -55,7 +55,7 @@ void ftp::PasvDataSocket::acceptConnection() {
     int clientFd = accept(this->getSocketFd(), (struct sockaddr *) &clientAddr,
         &addrLen);
     if (clientFd == -1)
-        throw std::runtime_error("Failed to accept connection");
+        throw ftp::Socket::SocketError("Failed to accept connection");
     this->_connectedClientSocket = std::make_unique<Socket>(clientFd,
         clientAddr);
     std::cout << inet_ntoa(clientAddr.sin_addr) << ":" <<
