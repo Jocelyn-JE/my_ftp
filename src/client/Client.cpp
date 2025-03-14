@@ -11,8 +11,8 @@
 
 // Helper functions -----------------------------------------------------------
 
-static void clientDisconnect(ftp::Client *client) {
-    std::cout << "Client " << client->_controlSocket.getSocketFd()
+static void clientDisconnect(ftp::Client const &client) {
+    std::cout << "Client " << client._controlSocket.getSocketFd()
         << " disconnected" << std::endl;
 }
 
