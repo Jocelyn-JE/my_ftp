@@ -235,7 +235,6 @@ static std::string doPort(std::string commandLine, ftp::Client *client) {
 
 // Not finished yet
 static std::string doList(std::string commandLine, ftp::Client *client) {
-    bool pathProvided = false;
     std::string path;
 
     if (!client->isLoggedIn())
@@ -243,24 +242,22 @@ static std::string doList(std::string commandLine, ftp::Client *client) {
     if (commandLine != "LIST" && (commandLine.size() < 6 ||
         commandLine.substr(0, 5) != "LIST "))
         return "501 Syntax error in parameters or arguments.";
-    if (commandLine.substr(0, 5) == "LIST ")
-        pathProvided = true;
     try {
-        path = pathProvided ? ftp::DirectoryUtility::resolvePath(
-            client->getRootPath(), client->getFullPath(), commandLine.substr(5))
-            : client->getFullPath();
+        path = commandLine.substr(0, 5) == "LIST " ? ftp::DirectoryUtility::
+            resolvePath(client->getRootPath(), client->getFullPath(),
+            commandLine.substr(5)) : client->getFullPath();
     } catch(const std::exception &e) {
         std::cout << e.what() << std::endl;
         return "450 Requested file action not taken.";
     }
-    if (client->_dataSocket == nullptr)
-        return "425 Can't open data connection.";
     int pid = fork();
     if (pid == -1) {
         std::cout << "Failed to fork process" << std::endl;
         return "450 Requested file action not taken.";
     }
     if (pid == 0) {
+        if (client->_dataSocket == nullptr)
+            return "425 Can't open data connection.";
         std::cout << "List command child connecting to client" << std::endl;
         client->_dataSocket->connectToClient();
         std::cout << "List command child writing to dataSocket" << std::endl;
@@ -269,11 +266,10 @@ static std::string doList(std::string commandLine, ftp::Client *client) {
         client->_controlSocket.writeToSocket("226 Transfer complete; "
             "Closing data connection.");
         std::cout << "List command child exiting" << std::endl;
-        throw std::runtime_error("Exiting child process");
+        std::exit(0);
     } else {
         std::cout << "List command parent destroying _dataSocket" << std::endl;
-        delete client->_dataSocket.release();
-        client->_dataSocket = nullptr;
+        client->_dataSocket.reset(nullptr);
     }
     return "150 File status okay; about to open data connection.";
 }
