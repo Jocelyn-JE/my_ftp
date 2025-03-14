@@ -13,7 +13,7 @@
     #include <string>
     #include "sockets/Socket.hpp"
     #include "PollFdList.hpp"
-    #include "Client.hpp"
+    #include "client/Client.hpp"
     #define LISTEN_BACKLOG 128
 
 namespace ftp {
