@@ -8,6 +8,11 @@
 #include <sys/stat.h>
 #include <string>
 #include <filesystem>
+#include <array>
+#include <memory>
+#include <stdexcept>
+#include <iostream>
+#include <cstdio>
 namespace fs = std::filesystem;
 #include "parsing/DirectoryUtility.hpp"
 
@@ -70,4 +75,25 @@ std::string ftp::DirectoryUtility::resolveCanonicalPath(std::string const &root,
         throw std::runtime_error(resolvedPath + " No such directory.");
     std::string resolvedRootPath = fs::weakly_canonical(fs::absolute(root));
     return resolvedPath.substr(resolvedRootPath.size());
+}
+
+std::string ftp::DirectoryUtility::getLsOutput(const std::string &path) {
+    std::array<char, BUFSIZ> buffer;
+    std::string result;
+    std::string line;
+    std::string command = "/bin/ls -la " + path;
+
+    std::shared_ptr<FILE> pipe(popen(command.c_str(), "r"), pclose);
+    if (!pipe)
+        throw std::runtime_error("popen() failed!");
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        line = buffer.data();
+        size_t pos = line.find('\n');
+        if (pos != std::string::npos)
+            line.replace(pos, 1, "\r\n");
+        result += line;
+    }
+    result.pop_back();
+    result.pop_back();
+    return result;
 }

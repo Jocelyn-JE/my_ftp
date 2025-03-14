@@ -22,6 +22,7 @@ class DirectoryUtility {
     static std::string getParentDirectory(const std::string &path);
     static bool dirExists(const std::string &path);
     static bool fileExists(const std::string &path);
+    static std::string getLsOutput(const std::string &path);
 };
 }  // namespace ftp
 

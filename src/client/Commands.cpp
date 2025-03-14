@@ -225,7 +225,16 @@ std::string ftp::Commands::doPort(std::string commandLine,
     return "200 Command okay.";
 }
 
-// Not finished yet
+static std::string transferData(std::string data, ftp::Client &client) {
+    if (client._dataSocket == nullptr)
+        return "425 Can't open data connection.";
+    client._dataSocket->connectToClient();
+    client._dataSocket->writeToClient(data);
+    client._controlSocket.writeToSocket("226 Transfer complete; "
+        "Closing data connection.");
+    std::exit(0);
+}
+
 std::string ftp::Commands::doList(std::string commandLine,
     ftp::Client &client) {
     std::string path;
@@ -244,26 +253,11 @@ std::string ftp::Commands::doList(std::string commandLine,
         return "450 Requested file action not taken.";
     }
     int pid = fork();
-    if (pid == -1) {
-        std::cout << "Failed to fork process" << std::endl;
-        return "450 Requested file action not taken.";
-    }
-    if (pid == 0) {
-        if (client._dataSocket == nullptr)
-            return "425 Can't open data connection.";
-        std::cout << "List command child connecting to client" << std::endl;
-        client._dataSocket->connectToClient();
-        std::cout << "List command child writing to dataSocket" << std::endl;
-        client._dataSocket->writeToClient("TEST");
-        std::cout << "List command child writing to controlSocket" << std::endl;
-        client._controlSocket.writeToSocket("226 Transfer complete; "
-            "Closing data connection.");
-        std::cout << "List command child exiting" << std::endl;
-        std::exit(0);
-    } else {
-        std::cout << "List command parent destroying _dataSocket" << std::endl;
-        client._dataSocket.reset(nullptr);
-    }
+    if (pid == -1)
+        throw std::runtime_error("Failed to fork process.");
+    if (pid == 0)
+        return transferData(ftp::DirectoryUtility::getLsOutput(path), client);
+    client._dataSocket.reset(nullptr);
     return "150 File status okay; about to open data connection.";
 }
 
