@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include "client/Client.hpp"
+#include "client/Commands.hpp"
 
 // Helper functions -----------------------------------------------------------
 
