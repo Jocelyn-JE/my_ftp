@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <string>
-#include "src/Socket.hpp"
+#include "sockets/Socket.hpp"
 
 ftp::Socket::Socket(int fd, struct sockaddr_in address) :
     _closeSocketOnDestruction(false) {

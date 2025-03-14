@@ -5,8 +5,8 @@
 ** Datasocket
 */
 
-#ifndef SRC_SERVER_PORTDATASOCKET_HPP_
-    #define SRC_SERVER_PORTDATASOCKET_HPP_
+#ifndef SRC_SOCKETS_PORTDATASOCKET_HPP_
+    #define SRC_SOCKETS_PORTDATASOCKET_HPP_
     #include <string>
     #include "Socket.hpp"
     #include "IDataSocket.hpp"
@@ -26,4 +26,4 @@ class PortDataSocket : private Socket, public IDataSocket {
 };  // class PortDataSocket
 }  // namespace ftp
 
-#endif  // SRC_SERVER_PORTDATASOCKET_HPP_
+#endif  // SRC_SOCKETS_PORTDATASOCKET_HPP_
