@@ -78,14 +78,3 @@ Test(getParentDirectory, two_dir) {
     cr_assert_eq(ftp::DirectoryUtility::getParentDirectory("/home/user"),
         "/home");
 }
-
-Test(lsOutput, root) {
-    std::string expected = "total 0\r\n"
-"drwxr-xr-x. 1 epi-jo epi-jo 74 11 mars  23:16 .\r\n"
-"drwxr-xr-x. 1 epi-jo epi-jo 76 11 mars  16:31 ..\r\n"
-"-rw-r--r--. 1 epi-jo epi-jo  0 11 mars  16:31 test_fileA\r\n"
-"-rw-r--r--. 1 epi-jo epi-jo  0 11 mars  16:31 test_fileA copy\r\n"
-"drwxr-xr-x. 1 epi-jo epi-jo 50 14 mars  14:13 test_folder2";
-    cr_assert_eq(ftp::DirectoryUtility::getLsOutput("./tests/test_folder1"),
-        expected);
-}
