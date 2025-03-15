@@ -226,8 +226,10 @@ std::string ftp::Commands::doPort(std::string commandLine,
 }
 
 static std::string transferData(std::string data, ftp::Client &client) {
-    if (client._dataSocket == nullptr)
-        return "425 Can't open data connection.";
+    if (client._dataSocket == nullptr) {
+        client._controlSocket.writeToSocket("425 Can't open data connection.");
+        std::exit(0);
+    }
     client._dataSocket->connectToClient();
     client._dataSocket->writeToClient(data);
     client._controlSocket.writeToSocket("226 Transfer complete; "
