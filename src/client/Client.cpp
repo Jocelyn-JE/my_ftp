@@ -34,7 +34,8 @@ static std::string getCommand(const std::string &commandLine) {
 
 ftp::Client::Client(int fd, struct sockaddr_in address, std::string rootPath)
     : _controlSocket(fd, address), _dataSocket(nullptr), _username(""),
-    _password(""), _currentPath(""), _rootPath(rootPath) {
+    _password("thisisaverybadwaytohandlepasswords"), _currentPath(""),
+    _rootPath(rootPath) {
     _commands["USER"] = Commands::doUser;
     _commands["PASS"] = Commands::doPass;
     _commands["CWD"]  = Commands::doCwd;
